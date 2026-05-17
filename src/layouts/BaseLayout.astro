@@ -1,6 +1,7 @@
 ---
 import "@styles/global.css";
 import { modules } from "@data/modules";
+import { withBasePath, withoutBasePath } from "@utils/paths";
 
 type Props = {
   title: string;
@@ -8,7 +9,7 @@ type Props = {
 };
 
 const { title, description = "A flexible German zero-to-B1 learning path." } = Astro.props;
-const currentPath = Astro.url.pathname;
+const currentPath = withoutBasePath(Astro.url.pathname);
 const navItems = [
   { href: "/", label: "Start" },
   { href: "/basics", label: "Basics" },
@@ -36,7 +37,7 @@ const isModulesPath = currentPath.startsWith("/modules");
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
           </button>
-          <a class="brand" href="/">
+          <a class="brand" href={withBasePath("/")}>
             <span class="brand-mark" aria-hidden="true">B1</span>
             <span>German2B1</span>
           </a>
@@ -46,7 +47,7 @@ const isModulesPath = currentPath.startsWith("/modules");
       <button class="menu-overlay" type="button" aria-label="Close menu"></button>
       <aside class="side-menu" aria-label="App menu">
         <div class="side-menu-header">
-          <a class="brand" href="/">
+          <a class="brand" href={withBasePath("/")}>
             <span class="brand-mark" aria-hidden="true">B1</span>
             <span>German2B1</span>
           </a>
@@ -62,7 +63,7 @@ const isModulesPath = currentPath.startsWith("/modules");
                 {
                   modules.map((module) => (
                     <a
-                      href={`/modules/${module.id}`}
+                      href={withBasePath(`/modules/${module.id}`)}
                       aria-current={currentPath === `/modules/${module.id}` ? "page" : undefined}
                     >
                       <span>{module.id.toUpperCase()}</span>
@@ -75,7 +76,7 @@ const isModulesPath = currentPath.startsWith("/modules");
             {
               navItems.map((item) => (
                 <a
-                  href={item.href}
+                  href={withBasePath(item.href)}
                   aria-current={
                     currentPath === item.href ||
                     (item.href !== "/" && currentPath.startsWith(item.href))

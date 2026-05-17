@@ -2,6 +2,7 @@
 import ModuleCard from "@components/ModuleCard.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { getModulesByLevel, levels, modules } from "@data/modules";
+import { withBasePath } from "@utils/paths";
 
 const nextModules = modules.slice(0, 6);
 ---
@@ -10,7 +11,7 @@ const nextModules = modules.slice(0, 6);
   <section class="level-path" aria-label="German learning path">
     {
       levels.map((level) => (
-        <a class="level-step" href={`/modules#${level.toLowerCase()}`}>
+        <a class="level-step" href={withBasePath(`/modules#${level.toLowerCase()}`)}>
           <span class="meta">{level}</span>
           <strong>{getModulesByLevel(level).length} modules</strong>
         </a>

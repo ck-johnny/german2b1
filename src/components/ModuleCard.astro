@@ -1,5 +1,6 @@
 ---
 import type { LearningModule } from "@data/modules";
+import { withBasePath } from "@utils/paths";
 
 type Props = {
   module: LearningModule;
@@ -8,7 +9,7 @@ type Props = {
 const { module } = Astro.props;
 ---
 
-<a class="card" href={`/modules/${module.id}`}>
+<a class="card" href={withBasePath(`/modules/${module.id}`)}>
   <span class="meta">{module.id.toUpperCase()} · {module.examBridge}</span>
   <h3>{module.title}</h3>
   <p>{module.summary}</p>
