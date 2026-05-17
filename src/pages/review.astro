@@ -1,0 +1,48 @@
+---
+import GermanText from "@components/GermanText.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { modules } from "@data/modules";
+import { getStudyExtra } from "@data/studyExtras";
+import { getSentenceBank } from "@utils/sentenceBank";
+---
+
+<BaseLayout title="Review · German2B1" description="Manual review cards for German2B1 modules.">
+  <header class="compact-page-title">
+    <h1>Review</h1>
+  </header>
+
+  <input class="review-scan-toggle" id="review-scan-mode" type="checkbox" />
+  <div class="review-toolbar">
+    <label class="review-mode-label" for="review-scan-mode">Show all answers</label>
+    <p class="review-mode-note">Default mode keeps each answer hidden for recall practice.</p>
+  </div>
+
+  <div class="review-list">
+    {
+      modules.map((module) => (
+        <section class="section">
+          <h2>{module.id.toUpperCase()} · {module.title}</h2>
+          <div class="grid">
+            {getSentenceBank(module, getStudyExtra(module.id)).map((item, index) => {
+              const cardId = `review-${module.id}-${index}`;
+
+              return (
+                <article class="review-card">
+                  <input class="review-toggle" id={cardId} type="checkbox" />
+                  <label class="review-prompt" for={cardId}>
+                    <GermanText text={item.de} strong />
+                    <span class="review-action">Reveal</span>
+                  </label>
+                  <div class="answer review-answer">
+                    <p><strong>English:</strong> {item.en}</p>
+                    <p><strong>Type:</strong> {item.label}</p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>

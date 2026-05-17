@@ -1,0 +1,294 @@
+---
+import "@styles/global.css";
+import { modules } from "@data/modules";
+
+type Props = {
+  title: string;
+  description?: string;
+};
+
+const { title, description = "A flexible German zero-to-B1 learning path." } = Astro.props;
+const currentPath = Astro.url.pathname;
+const navItems = [
+  { href: "/", label: "Start" },
+  { href: "/basics", label: "Basics" },
+  { href: "/reader", label: "Reader" },
+  { href: "/review", label: "Review" },
+  { href: "/resources", label: "Resources" },
+];
+const isModulesPath = currentPath.startsWith("/modules");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <nav class="nav-inner" aria-label="Main navigation">
+          <button class="menu-button" type="button" aria-label="Open menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </button>
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true">B1</span>
+            <span>German2B1</span>
+          </a>
+        </nav>
+      </header>
+
+      <button class="menu-overlay" type="button" aria-label="Close menu"></button>
+      <aside class="side-menu" aria-label="App menu">
+        <div class="side-menu-header">
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true">B1</span>
+            <span>German2B1</span>
+          </a>
+          <button class="side-menu-close" type="button" aria-label="Close menu">x</button>
+        </div>
+
+        <div class="side-menu-section">
+          <span class="side-menu-label">Course</span>
+          <div class="nav-links">
+            <details class="module-nav" open={isModulesPath}>
+              <summary aria-current={isModulesPath ? "page" : undefined}>Modules</summary>
+              <div class="module-nav-list">
+                {
+                  modules.map((module) => (
+                    <a
+                      href={`/modules/${module.id}`}
+                      aria-current={currentPath === `/modules/${module.id}` ? "page" : undefined}
+                    >
+                      <span>{module.id.toUpperCase()}</span>
+                      {module.title}
+                    </a>
+                  ))
+                }
+              </div>
+            </details>
+            {
+              navItems.map((item) => (
+                <a
+                  href={item.href}
+                  aria-current={
+                    currentPath === item.href ||
+                    (item.href !== "/" && currentPath.startsWith(item.href))
+                      ? "page"
+                      : undefined
+                  }
+                >
+                  {item.label}
+                </a>
+              ))
+            }
+          </div>
+        </div>
+
+      </aside>
+
+      <main class="page">
+        <slot />
+      </main>
+      <nav class="bottom-audio-controls" aria-label="German audio speed">
+        <span class="bottom-audio-label">Audio speed</span>
+        <div class="bottom-speed-presets" role="group" aria-label="Playback speed presets">
+          <button type="button" data-speed-rate="0.25">0.25x</button>
+          <button type="button" data-speed-rate="0.5">0.5x</button>
+          <button type="button" data-speed-rate="0.75">0.75x</button>
+          <button type="button" data-speed-rate="1">1.0x</button>
+          <button type="button" data-speed-rate="1.5">1.5x</button>
+        </div>
+      </nav>
+      <footer class="site-footer">
+        <div class="nav-inner">
+          <span>Module-based German path from zero to B1.</span>
+          <span>German audio, English explanations, level-by-level practice.</span>
+        </div>
+      </footer>
+    </div>
+    <script is:inline>
+      (() => {
+        let fallbackAudio;
+        const speedStorageKey = "german2b1-audio-rate";
+        const defaultRate = 0.7;
+        let cachedGermanVoice;
+
+        const getCookieRate = () => {
+          const match = document.cookie
+            ?.split("; ")
+            .find((cookie) => cookie.startsWith(`${speedStorageKey}=`));
+          return match ? Number(decodeURIComponent(match.split("=")[1])) : NaN;
+        };
+
+        const getStoredRate = () => {
+          try {
+            const stored = window.localStorage?.getItem(speedStorageKey);
+            if (stored) return Number(stored);
+          } catch {
+            // Some embedded browsers block localStorage.
+          }
+
+          return getCookieRate();
+        };
+
+        const storeRate = (rate) => {
+          try {
+            window.localStorage?.setItem(speedStorageKey, String(rate));
+            return;
+          } catch {
+            // Fall through to cookie persistence.
+          }
+
+          document.cookie = `${speedStorageKey}=${encodeURIComponent(String(rate))}; max-age=31536000; path=/; SameSite=Lax`;
+        };
+
+        const getSavedRate = () => {
+          const saved = getStoredRate();
+          return Number.isFinite(saved) && saved > 0 ? saved : defaultRate;
+        };
+
+        let audioRate = getSavedRate();
+
+        const syncSpeedControls = () => {
+          document.querySelectorAll("[data-speed-rate]").forEach((button) => {
+            const rate = Number(button.dataset.speedRate);
+            const isActive = Math.abs(rate - audioRate) < 0.01;
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-pressed", String(isActive));
+          });
+        };
+
+        const setAudioRate = (rate) => {
+          audioRate = rate;
+          storeRate(rate);
+          if (fallbackAudio) fallbackAudio.playbackRate = audioRate;
+          syncSpeedControls();
+        };
+
+        const getGermanVoice = () => {
+          const voices = window.speechSynthesis?.getVoices?.() ?? [];
+          if (!voices.length) return undefined;
+
+          const germanVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith("de"));
+          const preferredNames = ["anna", "petra", "markus", "siri", "google", "microsoft"];
+          cachedGermanVoice =
+            germanVoices.find((voice) => voice.lang.toLowerCase() === "de-de" && voice.localService) ??
+            germanVoices.find((voice) =>
+              preferredNames.some((name) => voice.name.toLowerCase().includes(name)),
+            ) ??
+            germanVoices.find((voice) => voice.lang.toLowerCase() === "de-de") ??
+            germanVoices[0];
+
+          return cachedGermanVoice;
+        };
+
+        const setPlaying = (trigger) => {
+          document.querySelectorAll(".speak-de.is-playing").forEach((node) => {
+            node.classList.remove("is-playing");
+          });
+          trigger?.classList.add("is-playing");
+        };
+
+        const clearPlaying = (trigger) => {
+          trigger?.classList.remove("is-playing");
+        };
+
+        const playFallbackAudio = (text, trigger) => {
+          if (!("Audio" in window) && typeof document.createElement !== "function") {
+            setPlaying(trigger);
+            window.setTimeout(() => clearPlaying(trigger), 900);
+            return;
+          }
+
+          fallbackAudio?.pause();
+          const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q=${encodeURIComponent(text)}`;
+          fallbackAudio = "Audio" in window ? new Audio(audioUrl) : document.createElement("audio");
+          fallbackAudio.src = audioUrl;
+          fallbackAudio.playbackRate = audioRate;
+
+          setPlaying(trigger);
+          fallbackAudio.addEventListener("ended", () => clearPlaying(trigger), { once: true });
+          fallbackAudio.addEventListener("error", () => clearPlaying(trigger), { once: true });
+          fallbackAudio.play().catch(() => clearPlaying(trigger));
+        };
+
+        const speakGerman = (text, trigger) => {
+          if (!text) return;
+
+          if (!("speechSynthesis" in window)) {
+            playFallbackAudio(text, trigger);
+            return;
+          }
+
+          window.speechSynthesis.cancel();
+
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "de-DE";
+          utterance.rate = audioRate;
+          utterance.pitch = 0.98;
+
+          const voice = cachedGermanVoice ?? getGermanVoice();
+          if (voice) utterance.voice = voice;
+
+          setPlaying(trigger);
+          utterance.addEventListener("end", () => clearPlaying(trigger));
+          utterance.addEventListener("error", () => clearPlaying(trigger));
+
+          window.speechSynthesis.speak(utterance);
+        };
+
+        const handleTrigger = (event) => {
+          const trigger = event.target.closest("[data-speak-de]");
+          if (!trigger) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+          speakGerman(trigger.dataset.speakDe, trigger);
+        };
+
+        const menuButton = document.querySelector(".menu-button");
+        const closeMenuButtons = document.querySelectorAll(".menu-overlay, .side-menu-close, .side-menu a");
+        const setMenuOpen = (isOpen) => {
+          document.documentElement.classList.toggle("menu-open", isOpen);
+          menuButton?.setAttribute("aria-expanded", String(isOpen));
+        };
+
+        menuButton?.addEventListener("click", () => {
+          setMenuOpen(!document.documentElement.classList.contains("menu-open"));
+        });
+        closeMenuButtons.forEach((button) => {
+          button.addEventListener("click", () => setMenuOpen(false));
+        });
+
+        window.speechSynthesis?.addEventListener?.("voiceschanged", getGermanVoice);
+        getGermanVoice();
+        document.addEventListener("click", handleTrigger);
+        document.addEventListener("click", (event) => {
+          const speedButton = event.target.closest("[data-speed-rate]");
+          if (!speedButton) return;
+
+          const rate = Number(speedButton.dataset.speedRate);
+          if (!Number.isFinite(rate)) return;
+
+          setAudioRate(rate);
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            setMenuOpen(false);
+          }
+
+          if (event.key !== "Enter" && event.key !== " ") return;
+          handleTrigger(event);
+        });
+
+        syncSpeedControls();
+      })();
+    </script>
+  </body>
+</html>

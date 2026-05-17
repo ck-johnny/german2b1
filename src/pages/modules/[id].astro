@@ -1,0 +1,95 @@
+---
+import CheatSheet from "@components/CheatSheet.astro";
+import MicroCheck from "@components/MicroCheck.astro";
+import ResourceList from "@components/ResourceList.astro";
+import StudyExtras from "@components/StudyExtras.astro";
+import TaskList from "@components/TaskList.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getModuleById, modules } from "@data/modules";
+import { getResourcesByIds } from "@data/resources";
+import { getStudyExtra } from "@data/studyExtras";
+import { getSentenceBank } from "@utils/sentenceBank";
+
+export function getStaticPaths() {
+  return modules.map((module) => ({
+    params: { id: module.id },
+  }));
+}
+
+const module = getModuleById(Astro.params.id ?? "");
+
+if (!module) {
+  return Astro.redirect("/modules");
+}
+
+const officialResources = getResourcesByIds(module.resourceIds);
+const studyExtra = getStudyExtra(module.id);
+const sentenceBank = getSentenceBank(module, studyExtra);
+---
+
+<BaseLayout title={`${module.id.toUpperCase()} · ${module.title} · German2B1`} description={module.summary}>
+  <div class="module-layout">
+    <article class="reader">
+      <details class="lesson-overview">
+        <summary>
+          <span class="eyebrow">{module.id.toUpperCase()} · {module.level} · {module.examBridge}</span>
+          <h1>{module.title}</h1>
+        </summary>
+
+        <p class="lesson-summary">{module.summary}</p>
+
+        <section class="module-metadata" aria-label="Module metadata">
+          <article class="metadata-card">
+            <h2>Goal</h2>
+            <p><strong>{module.goalEn}</strong></p>
+          </article>
+
+          <article class="metadata-card">
+            <h2>German Target Items</h2>
+            <div class="pill-row">
+              {module.targetItems.map((item) => <span class="pill">{item}</span>)}
+            </div>
+          </article>
+
+          <article class="metadata-card">
+            <h2>Study status</h2>
+            <p>
+              {sentenceBank.length} listenable sentences · {module.grammar.length} grammar notes · {module.tasks.length} tasks · {module.microChecks.length} checks
+            </p>
+          </article>
+
+          <article class="metadata-card">
+            <h2>Done when</h2>
+            <ul>
+              <li>Explain the module goal in English.</li>
+              <li>Recall the sentence bank without looking.</li>
+              <li>Say five useful sentences out loud at a comfortable speed.</li>
+              <li>Complete one production task and both micro-checks.</li>
+            </ul>
+          </article>
+        </section>
+      </details>
+
+      <CheatSheet module={module} />
+      <StudyExtras extra={studyExtra} module={module} />
+      <TaskList tasks={module.tasks} />
+      <MicroCheck checks={module.microChecks} />
+
+      <section>
+        <h2>Search Prompts</h2>
+        <div class="task-list">
+          <article class="task">
+            <span class="meta">English</span>
+            <p>{module.searchPrompts.en}</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Official Links</h2>
+        <ResourceList resources={officialResources} />
+      </section>
+    </article>
+
+  </div>
+</BaseLayout>

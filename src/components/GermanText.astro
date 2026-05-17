@@ -1,0 +1,22 @@
+---
+type Props = {
+  text: string;
+  class?: string;
+  block?: boolean;
+  display?: string;
+  strong?: boolean;
+};
+
+const { text, class: className = "", block = false, display, strong = false } = Astro.props;
+---
+
+<span
+  aria-label={`Play German audio: ${text}`}
+  class:list={["speak-de", block && "speak-de-block", strong && "speak-de-strong", className]}
+  data-speak-de={text}
+  role="button"
+  tabindex="0"
+  title="Tap to hear German"
+>
+  {display ?? text}
+</span>

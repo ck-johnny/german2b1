@@ -1,0 +1,29 @@
+---
+import ResourceList from "@components/ResourceList.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { resources } from "@data/resources";
+
+const grouped = {
+  official: resources.filter((resource) => resource.kind === "official"),
+  exam: resources.filter((resource) => resource.kind === "exam"),
+  selfStudy: resources.filter((resource) => resource.kind === "self-study"),
+  tools: resources.filter((resource) => resource.kind === "tool"),
+};
+---
+
+<BaseLayout title="Resources · German2B1" description="Official and primary German B1 resource hub.">
+  <section class="section">
+    <h2>BAMF and Citizenship</h2>
+    <ResourceList resources={grouped.official} />
+  </section>
+
+  <section class="section">
+    <h2>B1 Exam Providers</h2>
+    <ResourceList resources={grouped.exam} />
+  </section>
+
+  <section class="section">
+    <h2>Self-Study and Tools</h2>
+    <ResourceList resources={[...grouped.selfStudy, ...grouped.tools]} />
+  </section>
+</BaseLayout>

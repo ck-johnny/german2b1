@@ -1,0 +1,18 @@
+---
+import ModuleCard from "@components/ModuleCard.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getModulesByLevel, levels } from "@data/modules";
+---
+
+<BaseLayout title="Modules · German2B1" description="All German2B1 modules from A1 to B1.">
+  {
+    levels.map((level) => (
+      <section id={level.toLowerCase()} class="level-band">
+        <h2>{level}</h2>
+        <div class="grid">
+          {getModulesByLevel(level).map((module) => <ModuleCard module={module} />)}
+        </div>
+      </section>
+    ))
+  }
+</BaseLayout>

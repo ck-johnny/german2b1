@@ -1,0 +1,27 @@
+---
+import ModuleCard from "@components/ModuleCard.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getModulesByLevel, levels, modules } from "@data/modules";
+
+const nextModules = modules.slice(0, 6);
+---
+
+<BaseLayout title="German2B1" description="A flexible module-based German learning path from zero to B1.">
+  <section class="level-path" aria-label="German learning path">
+    {
+      levels.map((level) => (
+        <a class="level-step" href={`/modules#${level.toLowerCase()}`}>
+          <span class="meta">{level}</span>
+          <strong>{getModulesByLevel(level).length} modules</strong>
+        </a>
+      ))
+    }
+  </section>
+
+  <section class="section">
+    <h2>Start at A1</h2>
+    <div class="grid">
+      {nextModules.map((module) => <ModuleCard module={module} />)}
+    </div>
+  </section>
+</BaseLayout>

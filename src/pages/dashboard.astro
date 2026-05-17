@@ -1,0 +1,69 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { levels, modules } from "@data/modules";
+---
+
+<BaseLayout title="Dashboard · German2B1" description="Progress model for German2B1.">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Progress model</p>
+      <h1>Built for irregular study.</h1>
+      <p class="lead">
+        The current dashboard is static documentation for the learner-state model.
+        Later, these blocks become real progress cards backed by local storage or a database.
+      </p>
+    </div>
+    <aside class="panel">
+      <div class="stats">
+        {levels.map((level) => <div class="stat"><span>{level} modules</span><strong>{modules.filter((module) => module.level === level).length}</strong></div>)}
+      </div>
+    </aside>
+  </section>
+
+  <section class="section">
+    <h2>State Modes</h2>
+    <div class="grid">
+      <article class="card">
+        <span class="meta">normal</span>
+        <h3>Study at ordinary pace.</h3>
+        <p>Use the next module and ordinary review prompts.</p>
+      </article>
+      <article class="card">
+        <span class="meta">sprint</span>
+        <h3>Short burst before a deadline.</h3>
+        <p>Prioritise micro-checks, weak modules, and productive exam tasks.</p>
+      </article>
+      <article class="card">
+        <span class="meta">paused</span>
+        <h3>No guilt during zero-weeks.</h3>
+        <p>Keep the last module visible and wait for a reboot session.</p>
+      </article>
+      <article class="card">
+        <span class="meta">reboot</span>
+        <h3>Restart without restarting the course.</h3>
+        <p>Review weakest cards and choose the next achievable module.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Future Completion Logic</h2>
+    <div class="grid">
+      <article class="card">
+        <span class="meta">1</span>
+        <h3>Objective quiz</h3>
+        <p>Can the learner answer the module micro-checks?</p>
+      </article>
+      <article class="card">
+        <span class="meta">2</span>
+        <h3>Production task</h3>
+        <p>Can the learner write or say something useful from the module?</p>
+      </article>
+      <article class="card">
+        <span class="meta">3</span>
+        <h3>Retention check</h3>
+        <p>Can the learner recall the key cards after a delay?</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

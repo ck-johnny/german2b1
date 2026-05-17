@@ -1,0 +1,33 @@
+---
+import GermanText from "@components/GermanText.astro";
+import type { MicroCheck } from "@data/modules";
+import { isLikelyGermanText } from "@utils/language";
+
+type Props = {
+  checks: MicroCheck[];
+};
+
+const { checks } = Astro.props;
+---
+
+<section>
+  <h2>Micro-Check</h2>
+  <div class="grid">
+    {
+      checks.map((check) => (
+        <details class="check-card">
+          <summary>{check.prompt}</summary>
+          <div class="answer">
+            {
+              isLikelyGermanText(check.answer) ? (
+                <GermanText text={check.answer} strong />
+              ) : (
+                check.answer
+              )
+            }
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</section>

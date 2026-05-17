@@ -1,0 +1,22 @@
+---
+import type { LearningModule } from "@data/modules";
+
+type Props = {
+  module: LearningModule;
+};
+
+const { module } = Astro.props;
+---
+
+<section>
+  <h2>Micro-Grammar</h2>
+  <ul class="note-list">
+    {
+      module.grammar.map((note) => (
+        <li>
+          <strong>{note.en}</strong>
+        </li>
+      ))
+    }
+  </ul>
+</section>

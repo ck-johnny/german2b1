@@ -1,0 +1,484 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Reader · German2B1" description="Paste German lines and tap them for pronunciation.">
+  <section class="compact-page-title">
+    <h1>Reader</h1>
+    <p>Paste German. Play, rearrange, or expand each line for English and word audio.</p>
+  </section>
+
+  <section class="reader-tool" aria-label="German listening reader">
+    <textarea
+      class="reader-input"
+      id="reader-input"
+      rows="6"
+      spellcheck="false"
+      placeholder={`Guten Morgen!\nIch lerne Deutsch.\nKönnen Sie das bitte wiederholen?`}
+    ></textarea>
+    <div class="reader-actions">
+      <span id="reader-count">0 lines</span>
+      <button class="button secondary" id="reader-clear" type="button">Clear</button>
+    </div>
+    <div class="reader-lines" id="reader-lines"></div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const storageKey = "german2b1-reader-text";
+      const input = document.querySelector("#reader-input");
+      const lines = document.querySelector("#reader-lines");
+      const count = document.querySelector("#reader-count");
+      const clear = document.querySelector("#reader-clear");
+      const translationCacheKey = "german2b1-reader-translations";
+      const germanTokenPattern = /[A-Za-zÄÖÜäöüß]+(?:-[A-Za-zÄÖÜäöüß]+)?|\d+/g;
+      const chromeTranslationTimeoutMs = 6000;
+      const googleTranslationTimeoutMs = 8000;
+      const expandedLineKeys = new Set();
+      let dragState = null;
+
+      if (!input || !lines || !count || !clear) return;
+
+      const commonTranslations = new Map(
+        [
+          ["Guten Morgen!", "Good morning!"],
+          ["Guten Tag!", "Good day!"],
+          ["Guten Abend!", "Good evening!"],
+          ["Hallo!", "Hello!"],
+          ["Ich lerne Deutsch.", "I am learning German."],
+          ["Können Sie das bitte wiederholen?", "Could you please repeat that?"],
+          ["Wie geht es Ihnen?", "How are you?"],
+          ["Mir geht es gut.", "I am doing well."],
+          ["Ich heiße Mei.", "My name is Mei."],
+          ["Ich komme aus Taiwan.", "I come from Taiwan."],
+          ["Ich wohne in Berlin.", "I live in Berlin."],
+          ["Ich möchte einen Termin machen.", "I would like to make an appointment."],
+          ["Wie wäre es mit einem Treffen am Samstag?", "How about a meeting on Saturday?"],
+          ["Ich bin einverstanden, aber wir brauchen einen Plan.", "I agree, but we need a plan."],
+          ["Ich bereite mich auf die B1-Prüfung vor.", "I am preparing for the B1 exam."],
+        ].map(([de, en]) => [de.toLocaleLowerCase("de-DE"), en]),
+      );
+
+      const wordGlosses = new Map(
+        Object.entries({
+          aber: "but",
+          abend: "evening",
+          am: "on / at the",
+          auf: "for / on",
+          aus: "from",
+          b1: "B1",
+          bereite: "prepare",
+          bitte: "please",
+          brauchen: "need",
+          das: "that / the",
+          deutsch: "German",
+          einen: "a / one",
+          einverstanden: "agreed",
+          es: "it",
+          geht: "goes / works",
+          guten: "good",
+          hallo: "hello",
+          heiße: "am called",
+          ich: "I",
+          ihnen: "you, formal",
+          ist: "is",
+          komme: "come",
+          können: "can / could",
+          lerne: "learn",
+          mei: "Mei",
+          mich: "myself / me",
+          mir: "me / to me",
+          mit: "with",
+          morgen: "morning / tomorrow",
+          möchte: "would like",
+          plan: "plan",
+          prüfung: "exam",
+          samstag: "Saturday",
+          sie: "you, formal / she / they",
+          taiwan: "Taiwan",
+          tag: "day",
+          termin: "appointment",
+          treffen: "meeting",
+          um: "around / at",
+          vor: "before / in front of",
+          wäre: "would be",
+          wiederholen: "repeat",
+          wie: "how",
+          wir: "we",
+          wohne: "live",
+        }),
+      );
+
+      const loadText = () => {
+        try {
+          return window.localStorage?.getItem(storageKey) ?? "";
+        } catch {
+          return "";
+        }
+      };
+
+      const saveText = (text) => {
+        try {
+          window.localStorage?.setItem(storageKey, text);
+        } catch {
+          // Reader still works without persistence.
+        }
+      };
+
+      const loadTranslations = () => {
+        try {
+          return JSON.parse(window.localStorage?.getItem(translationCacheKey) ?? "{}");
+        } catch {
+          return {};
+        }
+      };
+
+      const saveTranslations = (cache) => {
+        try {
+          window.localStorage?.setItem(translationCacheKey, JSON.stringify(cache));
+        } catch {
+          // Translation still works without persistence.
+        }
+      };
+
+      const translationCache = loadTranslations();
+
+      const getLocalTranslation = (line) => commonTranslations.get(line.toLocaleLowerCase("de-DE"));
+
+      const withTimeout = (promise, timeoutMs, label) =>
+        new Promise((resolve, reject) => {
+          const timeoutId = window.setTimeout(() => reject(new Error(`${label} timed out`)), timeoutMs);
+          promise.then(resolve, reject).finally(() => window.clearTimeout(timeoutId));
+        });
+
+      const parseGoogleTranslationPayload = (payload) => {
+        if (!Array.isArray(payload) || !Array.isArray(payload[0])) return "";
+
+        return payload[0]
+          .map((chunk) => (Array.isArray(chunk) && typeof chunk[0] === "string" ? chunk[0] : ""))
+          .join("")
+          .trim();
+      };
+
+      const translateWithChrome = async (line) => {
+        const translatorFactory = window.Translator;
+        if (!translatorFactory) throw new Error("Chrome built-in Translator is unavailable");
+
+        const availability = await withTimeout(
+          translatorFactory.availability({ sourceLanguage: "de", targetLanguage: "en" }),
+          chromeTranslationTimeoutMs,
+          "Chrome built-in Translator availability check",
+        );
+        if (availability === "unavailable") throw new Error("Chrome built-in Translator does not support German to English");
+
+        const translator = await withTimeout(
+          translatorFactory.create({ sourceLanguage: "de", targetLanguage: "en" }),
+          chromeTranslationTimeoutMs,
+          "Chrome built-in Translator setup",
+        );
+
+        try {
+          const translated = (await withTimeout(translator.translate(line), chromeTranslationTimeoutMs, "Chrome built-in Translator")).trim();
+          if (!translated) throw new Error("Chrome built-in Translator returned an empty response");
+          return translated;
+        } finally {
+          translator.destroy?.();
+        }
+      };
+
+      const translateWithGoogle = async (line) => {
+        const url = new URL("https://translate.googleapis.com/translate_a/single");
+        url.searchParams.set("client", "gtx");
+        url.searchParams.set("sl", "de");
+        url.searchParams.set("tl", "en");
+        url.searchParams.set("dt", "t");
+        url.searchParams.set("q", line);
+
+        const response = await withTimeout(fetch(url), googleTranslationTimeoutMs, "Google translation endpoint");
+        if (!response.ok) throw new Error(`Google translation failed with ${response.status}`);
+
+        const translated = parseGoogleTranslationPayload(await response.json());
+        if (!translated) throw new Error("Google translation response was empty");
+        return translated;
+      };
+
+      const translateLine = async (line) => {
+        const localTranslation = getLocalTranslation(line);
+        if (localTranslation) return { text: localTranslation, source: "Built-in phrase match" };
+        if (typeof translationCache[line] === "string") return { text: translationCache[line], source: "Saved translation" };
+        if (translationCache[line]?.text) return translationCache[line];
+
+        try {
+          const text = await translateWithChrome(line);
+          translationCache[line] = { text, source: "Chrome built-in Translator" };
+        } catch {
+          const text = await translateWithGoogle(line);
+          translationCache[line] = { text, source: "Google Translate endpoint" };
+        }
+
+        saveTranslations(translationCache);
+        return translationCache[line];
+      };
+
+      const tokenizeGerman = (line) => line.match(germanTokenPattern) ?? [];
+
+      const makeWordList = (line) => {
+        const list = document.createElement("div");
+        list.className = "reader-word-list";
+        list.setAttribute("aria-label", `German words in ${line}`);
+
+        tokenizeGerman(line).forEach((word) => {
+          const chip = document.createElement("span");
+          chip.className = "reader-word-chip";
+
+          const button = document.createElement("button");
+          button.className = "speak-de";
+          button.type = "button";
+          button.dataset.speakDe = word;
+          button.textContent = word;
+          button.setAttribute("aria-label", `Play German audio: ${word}`);
+
+          const gloss = document.createElement("small");
+          gloss.textContent = wordGlosses.get(word.toLocaleLowerCase("de-DE")) ?? "tap to hear";
+
+          chip.append(button, gloss);
+          list.append(chip);
+        });
+
+        return list;
+      };
+
+      const loadLineTranslation = async (item, line) => {
+        const translation = item.querySelector("[data-reader-translation]");
+        const source = item.querySelector("[data-reader-translation-source]");
+        if (!translation || translation.dataset.translationState === "loaded") return;
+
+        translation.dataset.translationState = "loading";
+        translation.textContent = "Translating...";
+        if (source) source.textContent = "German to English";
+
+        try {
+          const result = await translateLine(line);
+          translation.textContent = result.text;
+          if (source) source.textContent = `${result.source}. Translated from German to English.`;
+          translation.dataset.translationState = "loaded";
+        } catch {
+          translation.textContent = "English translation is unavailable right now. You can still tap each German word below.";
+          if (source) source.textContent = "Translation failed. Check your connection or browser privacy settings.";
+          translation.dataset.translationState = "error";
+        }
+      };
+
+      const getSplitLines = () =>
+        input.value
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean);
+
+      const persistSplitLines = (splitLines) => {
+        input.value = splitLines.join("\n");
+        renderLines();
+      };
+
+      const reorderLine = (fromIndex, toIndex) => {
+        const splitLines = getSplitLines();
+        if (
+          fromIndex === toIndex ||
+          fromIndex < 0 ||
+          toIndex < 0 ||
+          fromIndex >= splitLines.length ||
+          toIndex >= splitLines.length
+        ) {
+          return;
+        }
+
+        const [line] = splitLines.splice(fromIndex, 1);
+        splitLines.splice(toIndex, 0, line);
+        persistSplitLines(splitLines);
+      };
+
+      const clearDragStyles = () => {
+        lines.querySelectorAll(".reader-line").forEach((item) => {
+          item.classList.remove("is-dragging", "is-drop-before", "is-drop-after");
+        });
+      };
+
+      const updateDragTarget = (clientY) => {
+        if (!dragState) return;
+
+        const target = document.elementFromPoint(dragState.lastClientX, clientY)?.closest(".reader-line");
+        clearDragStyles();
+
+        const activeItem = lines.querySelector(`[data-reader-line-index="${dragState.fromIndex}"]`);
+        activeItem?.classList.add("is-dragging");
+
+        if (!target || !lines.contains(target) || target === activeItem) {
+          dragState.toIndex = dragState.fromIndex;
+          return;
+        }
+
+        const targetIndex = Number(target.dataset.readerLineIndex);
+        if (!Number.isFinite(targetIndex)) return;
+
+        const rect = target.getBoundingClientRect();
+        const isAfter = clientY > rect.top + rect.height / 2;
+        const rawDropIndex = targetIndex + (isAfter ? 1 : 0);
+        const adjustedDropIndex = rawDropIndex > dragState.fromIndex ? rawDropIndex - 1 : rawDropIndex;
+        const maxIndex = Math.max(0, getSplitLines().length - 1);
+
+        dragState.toIndex = Math.min(maxIndex, Math.max(0, adjustedDropIndex));
+        target.classList.add(isAfter ? "is-drop-after" : "is-drop-before");
+      };
+
+      const startDrag = (event, index) => {
+        event.preventDefault();
+        dragState = {
+          fromIndex: index,
+          toIndex: index,
+          lastClientX: event.clientX,
+          pointerId: event.pointerId,
+        };
+
+        document.documentElement.classList.add("reader-is-dragging");
+        event.currentTarget.setPointerCapture?.(event.pointerId);
+        document.addEventListener("pointermove", updateDrag);
+        document.addEventListener("pointerup", endDrag);
+        document.addEventListener("pointercancel", endDrag);
+        updateDragTarget(event.clientY);
+      };
+
+      const updateDrag = (event) => {
+        if (!dragState || event.pointerId !== dragState.pointerId) return;
+
+        dragState.lastClientX = event.clientX;
+        updateDragTarget(event.clientY);
+      };
+
+      const endDrag = (event) => {
+        if (!dragState || event.pointerId !== dragState.pointerId) return;
+
+        const { fromIndex, toIndex } = dragState;
+        dragState = null;
+        document.documentElement.classList.remove("reader-is-dragging");
+        document.removeEventListener("pointermove", updateDrag);
+        document.removeEventListener("pointerup", endDrag);
+        document.removeEventListener("pointercancel", endDrag);
+        clearDragStyles();
+        reorderLine(fromIndex, toIndex);
+      };
+
+      const renderLines = () => {
+        const text = input.value;
+        const splitLines = getSplitLines();
+
+        count.textContent = `${splitLines.length} ${splitLines.length === 1 ? "line" : "lines"}`;
+        lines.replaceChildren(
+          ...splitLines.map((line, index) => {
+            const lineKey = `${index}:${line}`;
+            const isExpanded = expandedLineKeys.has(lineKey);
+            const item = document.createElement("article");
+            item.className = `reader-line ${isExpanded ? "is-expanded" : ""}`;
+            item.dataset.readerLineIndex = String(index);
+
+            const actions = document.createElement("div");
+            actions.className = "reader-line-actions";
+
+            const reorder = document.createElement("div");
+            reorder.className = "reader-reorder-controls";
+
+            const dragHandle = document.createElement("button");
+            dragHandle.className = "reader-drag-handle";
+            dragHandle.type = "button";
+            dragHandle.textContent = "↕";
+            dragHandle.setAttribute("aria-label", `Drag to reorder line ${index + 1}`);
+            dragHandle.title = "Drag to reorder";
+            dragHandle.addEventListener("pointerdown", (event) => startDrag(event, index));
+            dragHandle.addEventListener("pointermove", updateDrag);
+            dragHandle.addEventListener("pointerup", endDrag);
+            dragHandle.addEventListener("pointercancel", endDrag);
+
+            reorder.append(dragHandle);
+
+            const playButton = document.createElement("button");
+            playButton.className = "reader-line-play speak-de speak-de-block";
+            playButton.type = "button";
+            playButton.dataset.speakDe = line;
+            playButton.setAttribute("aria-label", `Play German audio: ${line}`);
+
+            const playIcon = document.createElement("span");
+            playIcon.className = "reader-play-icon";
+            playIcon.textContent = "▶";
+            playIcon.setAttribute("aria-hidden", "true");
+
+            const lineText = document.createElement("span");
+            lineText.className = "reader-line-text";
+            lineText.textContent = line;
+
+            playButton.append(playIcon, lineText);
+
+            const expandButton = document.createElement("button");
+            expandButton.className = "reader-expand-button";
+            expandButton.type = "button";
+            expandButton.textContent = isExpanded ? "−" : "+";
+            expandButton.setAttribute("aria-expanded", String(isExpanded));
+            expandButton.setAttribute("aria-label", `${isExpanded ? "Hide" : "Show"} translation for line ${index + 1}`);
+            expandButton.title = isExpanded ? "Hide translation" : "Show translation";
+            expandButton.addEventListener("click", () => {
+              if (expandedLineKeys.has(lineKey)) {
+                expandedLineKeys.delete(lineKey);
+              } else {
+                expandedLineKeys.add(lineKey);
+              }
+              renderLines();
+            });
+
+            actions.append(reorder, playButton, expandButton);
+
+            const body = document.createElement("div");
+            body.className = "reader-line-body";
+
+            const translationLabel = document.createElement("span");
+            translationLabel.className = "reader-analysis-label";
+            translationLabel.textContent = "Sentence";
+
+            const translation = document.createElement("p");
+            translation.className = "reader-translation";
+            translation.dataset.readerTranslation = "";
+            const cachedTranslation = getLocalTranslation(line)
+              ? { text: getLocalTranslation(line), source: "Built-in phrase match" }
+              : typeof translationCache[line] === "string"
+                ? { text: translationCache[line], source: "Saved translation" }
+                : translationCache[line];
+            translation.textContent = cachedTranslation?.text ?? "Translating...";
+            if (cachedTranslation?.text) translation.dataset.translationState = "loaded";
+
+            const source = document.createElement("small");
+            source.dataset.readerTranslationSource = "";
+            source.textContent = cachedTranslation?.source
+              ? `${cachedTranslation.source}. Translated from German to English.`
+              : "German to English";
+
+            const sentenceBlock = document.createElement("div");
+            sentenceBlock.className = "reader-sentence-translation";
+            sentenceBlock.append(translationLabel, translation, source);
+
+            body.append(sentenceBlock, makeWordList(line));
+            item.append(actions, body);
+            if (isExpanded) loadLineTranslation(item, line);
+            return item;
+          }),
+        );
+        saveText(text);
+      };
+
+      input.value = loadText();
+      input.addEventListener("input", renderLines);
+      clear.addEventListener("click", () => {
+        input.value = "";
+        renderLines();
+        input.focus();
+      });
+      renderLines();
+    })();
+  </script>
+</BaseLayout>

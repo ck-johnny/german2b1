@@ -1,0 +1,21 @@
+---
+import type { OfficialResource } from "@data/resources";
+
+type Props = {
+  resources: OfficialResource[];
+};
+
+const { resources } = Astro.props;
+---
+
+<div class="resource-list">
+  {
+    resources.map((resource) => (
+      <article class="resource">
+        <span class="meta">{resource.owner} · {resource.kind}</span>
+        <h3><a href={resource.url} target="_blank" rel="noreferrer">{resource.title}</a></h3>
+        <p>{resource.description}</p>
+      </article>
+    ))
+  }
+</div>

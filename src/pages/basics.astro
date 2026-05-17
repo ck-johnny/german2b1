@@ -1,0 +1,29 @@
+---
+import GermanText from "@components/GermanText.astro";
+import { basicSections } from "@data/basics";
+import BaseLayout from "@layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Basics · German2B1" description="Zero-knowledge German basics for A1 learners.">
+  <section class="compact-page-title">
+    <h1>A1 Basics</h1>
+    <p>Start here if German is completely new.</p>
+  </section>
+
+  {
+    basicSections.map((section) => (
+      <section class="level-band">
+        <h2>{section.title}</h2>
+        <div class="basic-grid">
+          {section.items.map((item) => (
+            <article class="basic-card">
+              <GermanText text={item.speechText ?? item.de} display={item.de} strong />
+              <span>{item.en}</span>
+              {item.note && <small>{item.note}</small>}
+            </article>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+import type { LearningModule } from "@data/modules";
+
+type Props = {
+  module: LearningModule;
+};
+
+const { module } = Astro.props;
+---
+
+<a class="card" href={`/modules/${module.id}`}>
+  <span class="meta">{module.id.toUpperCase()} · {module.examBridge}</span>
+  <h3>{module.title}</h3>
+  <p>{module.summary}</p>
+  <div class="pill-row">
+    <span class="pill">{module.level}</span>
+    <span class="pill blue">{module.theme}</span>
+  </div>
+</a>

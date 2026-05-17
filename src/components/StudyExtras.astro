@@ -1,0 +1,351 @@
+---
+import GermanText from "@components/GermanText.astro";
+import type { LearningModule } from "@data/modules";
+import type { StudyExtra } from "@data/studyExtras";
+import { getSentenceBankGroups } from "@utils/sentenceBank";
+
+type Props = {
+  extra?: StudyExtra;
+  module: LearningModule;
+};
+
+const { extra, module } = Astro.props;
+
+const commonGlosses: Record<string, string> = {
+  ab: "off / away",
+  aber: "but",
+  abend: "evening",
+  adresse: "address",
+  alle: "all",
+  alltag: "everyday life",
+  am: "on / at the",
+  an: "at / on",
+  anbei: "attached",
+  anderen: "other",
+  angerufen: "called",
+  anmelden: "register",
+  antrag: "application",
+  antwort: "answer / reply",
+  arbeit: "work / job",
+  arbeite: "work",
+  arbeiten: "work",
+  arzt: "doctor",
+  auf: "on / for",
+  aufgaben: "tasks",
+  aus: "from",
+  ausbildung: "vocational training",
+  außerdem: "besides / additionally",
+  bahn: "train / rail",
+  bahnhof: "train station",
+  bald: "soon",
+  bei: "at / with",
+  beim: "at the",
+  bekommen: "received",
+  behörde: "public office",
+  beispiel: "example",
+  bezahlen: "pay",
+  bin: "am",
+  bis: "until / by",
+  bitte: "please",
+  brauchen: "need",
+  brauche: "need",
+  büro: "office",
+  bus: "bus",
+  dass: "that",
+  danach: "after that",
+  danke: "thanks",
+  das: "the / that",
+  dem: "the",
+  den: "the",
+  der: "the",
+  des: "of the",
+  deshalb: "therefore",
+  deutsch: "German",
+  deutschkurs: "German course",
+  die: "the",
+  dir: "you",
+  doch: "though",
+  dort: "there",
+  dreimal: "three times",
+  drei: "three",
+  du: "you",
+  einen: "a / one",
+  eine: "a / one",
+  einem: "a / one",
+  ein: "a / one",
+  einverstanden: "agreed",
+  einbürgerung: "naturalisation",
+  einkaufen: "shop",
+  eingekauft: "shopped",
+  einladung: "invitation",
+  email: "email",
+  englisch: "English",
+  entschuldigung: "excuse me / sorry",
+  er: "he",
+  erfahrung: "experience",
+  es: "it",
+  euro: "euro",
+  falls: "if",
+  familie: "family",
+  fahren: "travel",
+  finde: "find / think",
+  frist: "deadline",
+  freitag: "Friday",
+  freue: "am glad / look forward",
+  für: "for",
+  fünf: "five",
+  ganz: "quite / very",
+  gegangen: "gone / went",
+  geht: "goes / works",
+  gehen: "go",
+  gelernt: "learned",
+  gern: "gladly",
+  geradeaus: "straight ahead",
+  geschwister: "siblings",
+  gestern: "yesterday",
+  gibt: "there is / gives",
+  gute: "good",
+  guten: "good",
+  haben: "have",
+  habe: "have",
+  haltestelle: "stop / station",
+  hallo: "hello",
+  haus: "house",
+  heizung: "heating",
+  heiße: "am called",
+  heißen: "are called",
+  helfen: "help",
+  hier: "here",
+  hilfe: "help",
+  hoffentlich: "hopefully",
+  ich: "I",
+  ihr: "you all / her",
+  ihnen: "you / them",
+  ihre: "your",
+  ihren: "your",
+  im: "in the",
+  in: "in",
+  ist: "is",
+  ja: "yes",
+  jeden: "every",
+  kann: "can",
+  können: "can",
+  kaffee: "coffee",
+  kaputt: "broken",
+  klein: "small",
+  komme: "come",
+  kommen: "come",
+  kompromiss: "compromise",
+  gekocht: "cooked",
+  krank: "sick",
+  kurz: "short",
+  leben: "live",
+  leider: "unfortunately",
+  lernen: "learn",
+  lerne: "learn",
+  lese: "read",
+  links: "left",
+  lösung: "solution",
+  machen: "do / make",
+  mache: "do / make",
+  man: "one / people",
+  mein: "my",
+  meine: "my",
+  meiner: "my / in my",
+  meinen: "my",
+  meinung: "opinion",
+  mich: "myself / me",
+  miete: "rent",
+  mir: "me / to me",
+  mit: "with",
+  mitbringen: "bring along",
+  mitgeteilt: "informed",
+  möcht: "would like",
+  möchte: "would like",
+  möchten: "would like",
+  montag: "Monday",
+  morgen: "tomorrow / morning",
+  muss: "must",
+  müssen: "must",
+  nach: "after / to",
+  name: "name",
+  nehme: "take",
+  nein: "no",
+  neu: "new",
+  neuen: "new",
+  nicht: "not",
+  noch: "still / again",
+  null: "zero",
+  nummer: "number",
+  oder: "or",
+  ohne: "without",
+  park: "park",
+  passt: "fits / works",
+  plan: "plan",
+  problem: "problem",
+  prüfung: "exam",
+  raum: "room",
+  rechnung: "bill",
+  rechts: "right",
+  regelmäßig: "regularly",
+  reserviere: "reserve",
+  samstag: "Saturday",
+  sage: "say / cancel",
+  schnell: "quickly",
+  schnelle: "quick",
+  schicken: "send",
+  schreibe: "write",
+  schreiben: "write",
+  schwachen: "weak",
+  schwester: "sister",
+  sehe: "see",
+  sehr: "very",
+  seit: "since / for",
+  sie: "she / they",
+  Sie: "you, formal",
+  sind: "are",
+  soll: "should",
+  sonntag: "Sunday",
+  sprechen: "speak",
+  spreche: "speak",
+  später: "later",
+  stadt: "city",
+  stelle: "position",
+  suche: "look for",
+  tag: "day",
+  taiwan: "Taiwan",
+  telefonnummer: "phone number",
+  termin: "appointment",
+  treffen: "meeting",
+  trinke: "drink",
+  trotzdem: "nevertheless",
+  tun: "do",
+  uhr: "o'clock",
+  um: "at / around",
+  und: "and",
+  unterlagen: "documents",
+  uns: "us / ourselves",
+  viel: "much / a lot",
+  vielen: "many",
+  vielleicht: "perhaps",
+  von: "from",
+  vor: "before / in front of",
+  vorbeikommen: "come by",
+  vorschlag: "suggestion",
+  warum: "why",
+  war: "was",
+  warten: "wait",
+  was: "what",
+  wasser: "water",
+  wegen: "because of / about",
+  weil: "because",
+  wenn: "if / when",
+  wer: "who",
+  wiederholen: "repeat",
+  wie: "how / what",
+  wichtig: "important",
+  wir: "we",
+  wohnen: "live",
+  wohne: "live",
+  wohnung: "apartment",
+  woher: "from where",
+  zimmer: "room",
+  zu: "to / too",
+  zuverlässig: "reliable",
+  zum: "to the",
+  zuerst: "first",
+  zurück: "back",
+  zwei: "two",
+  zwischen: "between",
+};
+
+const tokenizeGerman = (text: string) => text.match(/[A-Za-zÄÖÜäöüß]+(?:-[A-Za-zÄÖÜäöüß]+)?|\d+/g) ?? [];
+
+const makeGlossLookup = () => {
+  const lookup = new Map<string, string>();
+
+  Object.entries(commonGlosses).forEach(([word, gloss]) => {
+    lookup.set(word, gloss);
+    const lowerWord = word.toLocaleLowerCase("de-DE");
+    if (word === lowerWord) lookup.set(lowerWord, gloss);
+  });
+
+  module.vocabulary.forEach((item) => {
+    lookup.set(item.de, item.en);
+    lookup.set(item.de.toLocaleLowerCase("de-DE"), item.en);
+  });
+
+  return lookup;
+};
+
+const glossLookup = makeGlossLookup();
+const bankGroups = getSentenceBankGroups(module, extra);
+const bankItems = bankGroups.flatMap((group) => group.items);
+
+const getWordGlosses = (text: string) =>
+  tokenizeGerman(text).map((word) => ({
+    word,
+    gloss:
+      glossLookup.get(word) ??
+      glossLookup.get(word.toLocaleLowerCase("de-DE")) ??
+      "see sentence meaning",
+  }));
+
+const makeCategoryId = (category: string) =>
+  `${module.id}-${category
+    .toLocaleLowerCase("en")
+    .replaceAll("/", "")
+    .replaceAll(" ", "-")}`;
+---
+
+{
+  (extra || bankItems.length > 0) && (
+    <>
+      {extra && (
+        <section>
+          <h2>Pronunciation Notes</h2>
+          <div class="study-extra-list">
+            {extra.pronunciation.map((note) => (
+              <article class="study-extra-card">
+                <GermanText text={note.de} strong />
+                <p>{note.en}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section>
+        <h2>Sentences to Know</h2>
+        <div class="language-bank-groups">
+          {bankGroups.map((group) => (
+            <section class="bank-group" aria-labelledby={makeCategoryId(group.category)}>
+              <h3 id={makeCategoryId(group.category)}>{group.category}</h3>
+              <div class="language-bank">
+                {group.items.map((item) => (
+                  <details class="bank-card">
+                    <summary>
+                      <span class="bank-card-main">
+                        <span class="meta">{item.label}</span>
+                        <GermanText text={item.de} strong block />
+                        <span>{item.en}</span>
+                      </span>
+                    </summary>
+                    <div class="word-gloss-list" aria-label={`Word meanings for ${item.de}`}>
+                      {getWordGlosses(item.de).map((token) => (
+                        <span class="word-gloss">
+                          <GermanText text={token.word} display={token.word} />
+                          <small>{token.gloss}</small>
+                        </span>
+                      ))}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </section>
+    </>
+  )
+}
