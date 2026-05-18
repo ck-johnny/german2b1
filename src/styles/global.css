@@ -960,6 +960,9 @@ h3 {
   margin: 0;
   overflow: hidden;
   position: relative;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
 }
 
 .reader-line-actions {
@@ -1061,8 +1064,9 @@ h3 {
 }
 
 .reader-line.is-dragging {
-  box-shadow: 0 10px 22px rgb(21 32 42 / 10%);
-  opacity: 0.58;
+  border-color: rgb(20 115 93 / 42%);
+  box-shadow: 0 12px 26px rgb(21 32 42 / 14%);
+  z-index: 2;
 }
 
 .reader-line.is-drop-before::before,

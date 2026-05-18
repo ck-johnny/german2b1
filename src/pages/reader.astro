@@ -280,6 +280,8 @@ import BaseLayout from "@layouts/BaseLayout.astro";
         renderLines();
       };
 
+      const clampIndex = (index, maxIndex) => Math.min(maxIndex, Math.max(0, index));
+
       const reorderLine = (fromIndex, toIndex) => {
         const splitLines = getSplitLines();
         if (
@@ -300,34 +302,58 @@ import BaseLayout from "@layouts/BaseLayout.astro";
       const clearDragStyles = () => {
         lines.querySelectorAll(".reader-line").forEach((item) => {
           item.classList.remove("is-dragging", "is-drop-before", "is-drop-after");
+          item.style.removeProperty("order");
         });
+      };
+
+      const applyDragPreview = () => {
+        if (!dragState) return;
+
+        const items = Array.from(lines.querySelectorAll(".reader-line"));
+        const previewOrder = items.map((item) => Number(item.dataset.readerLineIndex));
+        const [draggedIndex] = previewOrder.splice(dragState.fromIndex, 1);
+        previewOrder.splice(dragState.toIndex, 0, draggedIndex);
+
+        items.forEach((item) => {
+          const itemIndex = Number(item.dataset.readerLineIndex);
+          const visualIndex = previewOrder.indexOf(itemIndex);
+          if (visualIndex >= 0) item.style.order = String(visualIndex);
+        });
+      };
+
+      const getPreviewDropIndex = (clientY) => {
+        const splitLines = getSplitLines();
+        const maxIndex = Math.max(0, splitLines.length - 1);
+        const activeItem = lines.querySelector(`[data-reader-line-index="${dragState.fromIndex}"]`);
+        const candidates = Array.from(lines.querySelectorAll(".reader-line"))
+          .filter((item) => item !== activeItem)
+          .sort((first, second) => {
+            const firstOrder = Number(first.style.order || first.dataset.readerLineIndex);
+            const secondOrder = Number(second.style.order || second.dataset.readerLineIndex);
+            return firstOrder - secondOrder;
+          });
+
+        const beforeItem = candidates.find((item) => {
+          const rect = item.getBoundingClientRect();
+          return clientY < rect.top + rect.height / 2;
+        });
+
+        if (!beforeItem) return maxIndex;
+
+        const beforeIndex = Number(beforeItem.dataset.readerLineIndex);
+        const rawDropIndex = beforeIndex > dragState.fromIndex ? beforeIndex - 1 : beforeIndex;
+        return clampIndex(rawDropIndex, maxIndex);
       };
 
       const updateDragTarget = (clientY) => {
         if (!dragState) return;
 
-        const target = document.elementFromPoint(dragState.lastClientX, clientY)?.closest(".reader-line");
         clearDragStyles();
 
         const activeItem = lines.querySelector(`[data-reader-line-index="${dragState.fromIndex}"]`);
         activeItem?.classList.add("is-dragging");
-
-        if (!target || !lines.contains(target) || target === activeItem) {
-          dragState.toIndex = dragState.fromIndex;
-          return;
-        }
-
-        const targetIndex = Number(target.dataset.readerLineIndex);
-        if (!Number.isFinite(targetIndex)) return;
-
-        const rect = target.getBoundingClientRect();
-        const isAfter = clientY > rect.top + rect.height / 2;
-        const rawDropIndex = targetIndex + (isAfter ? 1 : 0);
-        const adjustedDropIndex = rawDropIndex > dragState.fromIndex ? rawDropIndex - 1 : rawDropIndex;
-        const maxIndex = Math.max(0, getSplitLines().length - 1);
-
-        dragState.toIndex = Math.min(maxIndex, Math.max(0, adjustedDropIndex));
-        target.classList.add(isAfter ? "is-drop-after" : "is-drop-before");
+        dragState.toIndex = getPreviewDropIndex(clientY);
+        applyDragPreview();
       };
 
       const startDrag = (event, index) => {
