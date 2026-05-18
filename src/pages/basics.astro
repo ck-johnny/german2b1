@@ -10,14 +10,48 @@ import BaseLayout from "@layouts/BaseLayout.astro";
     <p>Start here if German is completely new.</p>
   </section>
 
+  <section class="number-converter" aria-labelledby="number-converter-title">
+    <div>
+      <h2 id="number-converter-title">Number Converter</h2>
+      <p>Type a number from 0 to 999999, then tap the German result to hear it.</p>
+    </div>
+    <label class="number-converter-field">
+      <span>Number</span>
+      <input
+        data-number-input
+        inputmode="numeric"
+        maxlength="6"
+        min="0"
+        max="999999"
+        placeholder="42"
+        type="number"
+      />
+    </label>
+    <button
+      class="number-result speak-de"
+      data-number-result
+      data-speak-de="zweiundvierzig"
+      type="button"
+    >
+      zweiundvierzig
+    </button>
+  </section>
+
   {
     basicSections.map((section) => (
       <section class="level-band">
         <h2>{section.title}</h2>
         <div class="basic-grid">
           {section.items.map((item) => (
-            <article class="basic-card">
-              <GermanText text={item.speechText ?? item.de} display={item.de} strong />
+            <article
+              aria-label={`Play German audio: ${item.speechText ?? item.de}`}
+              class="basic-card"
+              data-speak-de={item.speechText ?? item.de}
+              role="button"
+              tabindex="0"
+              title="Tap to hear German"
+            >
+              <GermanText text={item.speechText ?? item.de} display={item.de} strong interactive={false} />
               <span>{item.en}</span>
               {item.note && <small>{item.note}</small>}
             </article>
@@ -26,4 +60,100 @@ import BaseLayout from "@layouts/BaseLayout.astro";
       </section>
     ))
   }
+
+  <script>
+    const units = [
+      "null",
+      "eins",
+      "zwei",
+      "drei",
+      "vier",
+      "fünf",
+      "sechs",
+      "sieben",
+      "acht",
+      "neun",
+    ];
+    const teens = [
+      "zehn",
+      "elf",
+      "zwölf",
+      "dreizehn",
+      "vierzehn",
+      "fünfzehn",
+      "sechzehn",
+      "siebzehn",
+      "achtzehn",
+      "neunzehn",
+    ];
+    const tens = [
+      "",
+      "",
+      "zwanzig",
+      "dreißig",
+      "vierzig",
+      "fünfzig",
+      "sechzig",
+      "siebzig",
+      "achtzig",
+      "neunzig",
+    ];
+
+    const convertUnderHundred = (value: number) => {
+      if (value < 10) return units[value];
+      if (value < 20) return teens[value - 10];
+
+      const one = value % 10;
+      const ten = Math.floor(value / 10);
+      if (one === 0) return tens[ten];
+
+      return `${one === 1 ? "ein" : units[one]}und${tens[ten]}`;
+    };
+
+    const convertUnderThousand = (value: number) => {
+      if (value < 100) return convertUnderHundred(value);
+
+      const hundred = Math.floor(value / 100);
+      const remainder = value % 100;
+      const prefix = `${hundred === 1 ? "ein" : units[hundred]}hundert`;
+
+      return remainder === 0 ? prefix : `${prefix}${convertUnderHundred(remainder)}`;
+    };
+
+    const convertNumberToGerman = (value: number) => {
+      if (!Number.isInteger(value) || value < 0 || value > 999999) {
+        return "Enter 0 to 999999";
+      }
+
+      if (value < 1000) return convertUnderThousand(value);
+
+      const thousands = Math.floor(value / 1000);
+      const remainder = value % 1000;
+      const prefix = `${thousands === 1 ? "ein" : convertUnderThousand(thousands)}tausend`;
+
+      return remainder === 0 ? prefix : `${prefix}${convertUnderThousand(remainder)}`;
+    };
+
+    const input = document.querySelector("[data-number-input]");
+    const result = document.querySelector("[data-number-result]");
+
+    const syncNumberResult = () => {
+      if (!(input instanceof HTMLInputElement) || !(result instanceof HTMLElement)) return;
+
+      const value = input.value === "" ? 42 : Number(input.value);
+      const converted = convertNumberToGerman(value);
+      result.textContent = converted;
+
+      if (converted.startsWith("Enter")) {
+        result.removeAttribute("data-speak-de");
+        result.setAttribute("aria-disabled", "true");
+      } else {
+        result.dataset.speakDe = converted;
+        result.removeAttribute("aria-disabled");
+      }
+    };
+
+    input?.addEventListener("input", syncNumberResult);
+    syncNumberResult();
+  </script>
 </BaseLayout>

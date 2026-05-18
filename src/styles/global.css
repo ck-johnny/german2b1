@@ -892,16 +892,122 @@ h3 {
 }
 
 .basic-card {
+  align-content: start;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
+  cursor: pointer;
   display: grid;
   gap: 4px;
-  padding: 10px;
+  min-height: 92px;
+  padding: 12px 36px 12px 12px;
+  position: relative;
+}
+
+.basic-card::after {
+  border-bottom: 0.38em solid transparent;
+  border-left: 0.58em solid var(--green);
+  border-top: 0.38em solid transparent;
+  content: "";
+  opacity: 0.72;
+  position: absolute;
+  right: 14px;
+  top: 16px;
+}
+
+.basic-card:hover,
+.basic-card:focus-visible,
+.basic-card.is-playing {
+  background: var(--green-soft);
+  border-color: rgb(20 115 93 / 36%);
+  color: var(--green-dark);
+  outline: 0;
+}
+
+.basic-card:focus-visible {
+  box-shadow: 0 0 0 3px rgb(20 115 93 / 18%);
+}
+
+.basic-card > span:first-child {
+  font-size: 1.08rem;
+  overflow-wrap: anywhere;
 }
 
 .basic-card small {
   color: var(--muted);
+}
+
+.number-converter {
+  align-items: end;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(180px, 1fr) minmax(120px, 180px) minmax(180px, 1fr);
+  margin-bottom: 26px;
+  padding: 12px;
+}
+
+.number-converter h2 {
+  font-size: 1.12rem;
+  margin-bottom: 4px;
+}
+
+.number-converter p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.number-converter-field {
+  display: grid;
+  gap: 6px;
+}
+
+.number-converter-field span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.number-converter-field input {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font: inherit;
+  min-height: 42px;
+  padding: 8px 10px;
+  width: 100%;
+}
+
+.number-converter-field input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgb(20 115 93 / 15%);
+  outline: 0;
+}
+
+.number-result {
+  background: var(--green-soft);
+  border: 1px solid rgb(20 115 93 / 20%);
+  color: var(--green-dark);
+  font: inherit;
+  font-weight: 900;
+  justify-content: center;
+  margin: 0;
+  min-height: 42px;
+  padding: 8px 12px;
+  text-align: center;
+  width: 100%;
+}
+
+.number-result[aria-disabled="true"] {
+  background: var(--surface-strong);
+  color: var(--muted);
+  cursor: default;
+  text-decoration: none;
 }
 
 .reader-tool {
@@ -1356,7 +1462,8 @@ h3 {
   }
 
   .hero,
-  .module-layout {
+  .module-layout,
+  .number-converter {
     grid-template-columns: 1fr;
   }
 

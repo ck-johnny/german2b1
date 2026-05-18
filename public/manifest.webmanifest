@@ -1,0 +1,19 @@
+{
+  "name": "German2B1",
+  "short_name": "German2B1",
+  "description": "A compact German self-study app from zero to B1.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#14735d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

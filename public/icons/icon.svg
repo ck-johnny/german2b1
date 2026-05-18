@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#14735d"/>
+  <path fill="#e4f3ee" d="M94 128h324v256H94z"/>
+  <path fill="#15202e" d="M122 160h268v48H122z"/>
+  <path fill="#a8324a" d="M122 208h268v48H122z"/>
+  <path fill="#f3c94f" d="M122 256h268v48H122z"/>
+  <text x="256" y="372" fill="#15202e" font-family="Arial, sans-serif" font-size="72" font-weight="900" text-anchor="middle">B1</text>
+</svg>
