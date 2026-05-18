@@ -1,4 +1,4 @@
-const CACHE_NAME = "german2b1-shell-v1";
+const CACHE_NAME = "german2b1-shell-v2";
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL = [
   "./",
@@ -6,10 +6,43 @@ const APP_SHELL = [
   "./reader/",
   "./review/",
   "./resources/",
+  "./modules/",
+  "./modules/a1-1/",
+  "./modules/a1-2/",
+  "./modules/a1-3/",
+  "./modules/a1-4/",
+  "./modules/a1-5/",
+  "./modules/a1-6/",
+  "./modules/a2-1/",
+  "./modules/a2-2/",
+  "./modules/a2-3/",
+  "./modules/a2-4/",
+  "./modules/a2-5/",
+  "./modules/a2-6/",
+  "./modules/b1-1/",
+  "./modules/b1-2/",
+  "./modules/b1-3/",
+  "./modules/b1-4/",
+  "./modules/b1-5/",
+  "./modules/b1-6/",
   "./manifest.webmanifest",
   "./icons/icon.svg",
 ].map((path) => new URL(path, APP_SCOPE).toString());
 const FALLBACK_URL = new URL("./", APP_SCOPE).toString();
+
+const getCachedNavigationFallback = async (request) => {
+  const requestUrl = new URL(request.url);
+  const normalizedPath = requestUrl.pathname.endsWith("/")
+    ? requestUrl.pathname
+    : `${requestUrl.pathname}/`;
+  const normalizedUrl = new URL(`${normalizedPath}${requestUrl.search}`, requestUrl.origin);
+
+  return (
+    (await caches.match(request)) ??
+    (await caches.match(normalizedUrl.toString())) ??
+    (await caches.match(FALLBACK_URL))
+  );
+};
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -43,9 +76,9 @@ self.addEventListener("fetch", (event) => {
       fetch(event.request)
         .then((response) => {
           if (response.ok) return response;
-          return caches.match(FALLBACK_URL).then((fallback) => fallback ?? response);
+          return getCachedNavigationFallback(event.request).then((fallback) => fallback ?? response);
         })
-        .catch(() => caches.match(FALLBACK_URL)),
+        .catch(() => getCachedNavigationFallback(event.request)),
     );
     return;
   }
