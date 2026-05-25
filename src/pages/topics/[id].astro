@@ -1,0 +1,125 @@
+---
+import GermanText from "@components/GermanText.astro";
+import ModuleCard from "@components/ModuleCard.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getModuleById } from "@data/modules";
+import { getTopicById, topics } from "@data/topics";
+import { isLikelyGermanText } from "@utils/language";
+
+export function getStaticPaths() {
+  return topics.map((topic) => ({
+    params: { id: topic.id },
+  }));
+}
+
+const topic = getTopicById(Astro.params.id ?? "");
+
+if (!topic) {
+  return Astro.redirect("/topics");
+}
+
+const linkedModules = topic.moduleIds
+  .map((moduleId) => getModuleById(moduleId))
+  .filter((module) => module !== undefined);
+---
+
+<BaseLayout title={`${topic.title} · Topics · German2B1`} description={topic.summary}>
+  <article class="reader topic-reader">
+    <header class="topic-header">
+      <span class="meta">{topic.level} · {topic.category}</span>
+      <h1>{topic.title}</h1>
+      <p class="lead">{topic.summary}</p>
+      <div class="pill-row">
+        {topic.focus.map((item) => <span class="pill">{item}</span>)}
+      </div>
+    </header>
+
+    {
+      topic.explanation && (
+        <section>
+          <h2>How It Works</h2>
+          <div class="topic-note-list">
+            {topic.explanation.map((item) => (
+              <article class="topic-note">
+                <p>{item}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section>
+      <h2>Patterns</h2>
+      <div class="language-bank">
+        {
+          topic.patterns.map((pattern) => (
+            <article class="bank-card static-bank-card">
+              <span class="meta">{pattern.label}</span>
+              <GermanText text={pattern.de} strong block />
+              <p>{pattern.en}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      topic.commonMistakes && (
+        <section>
+          <h2>Common Traps</h2>
+          <div class="topic-note-list">
+            {topic.commonMistakes.map((item) => (
+              <article class="topic-note warning-note">
+                <p>{item}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section>
+      <h2>Practice</h2>
+      <div class="task-list">
+        {
+          topic.practice.map((item, index) => (
+            <article class="task">
+              <span class="meta">Task {index + 1}</span>
+              <p>{item}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      topic.checks && (
+        <section>
+          <h2>Micro-Check</h2>
+          <div class="grid">
+            {topic.checks.map((check) => (
+              <details class="check-card">
+                <summary>{check.prompt}</summary>
+                <div class="answer">
+                  {isLikelyGermanText(check.answer) ? (
+                    <GermanText text={check.answer} strong />
+                  ) : (
+                    check.answer
+                  )}
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section>
+      <h2>Related Modules</h2>
+      <div class="grid">
+        {linkedModules.map((module) => <ModuleCard module={module} />)}
+      </div>
+    </section>
+  </article>
+</BaseLayout>

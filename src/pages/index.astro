@@ -2,9 +2,20 @@
 import ModuleCard from "@components/ModuleCard.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { getModulesByLevel, levels, modules } from "@data/modules";
+import { topics } from "@data/topics";
 import { withBasePath } from "@utils/paths";
 
 const nextModules = modules.slice(0, 6);
+const priorityTopics = [
+  "pronunciation-alphabet",
+  "sein-and-haben",
+  "articles-der-die-das",
+  "accusative-case",
+  "sentence-position-two",
+  "questions",
+]
+  .map((topicId) => topics.find((topic) => topic.id === topicId))
+  .filter((topic) => topic !== undefined);
 ---
 
 <BaseLayout title="German2B1" description="A flexible module-based German learning path from zero to B1.">
@@ -17,6 +28,19 @@ const nextModules = modules.slice(0, 6);
         </a>
       ))
     }
+  </section>
+
+  <section class="section">
+    <h2>Study by Topic</h2>
+    <div class="grid">
+      {priorityTopics.map((topic) => (
+        <a class="card topic-card" href={withBasePath(`/topics/${topic.id}`)}>
+          <span class="meta">{topic.level} · {topic.category}</span>
+          <h3>{topic.title}</h3>
+          <p>{topic.summary}</p>
+        </a>
+      ))}
+    </div>
   </section>
 
   <section class="section">

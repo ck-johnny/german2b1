@@ -529,6 +529,84 @@ h3 {
   margin: 0;
 }
 
+.topic-card {
+  gap: 10px;
+}
+
+.topic-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topic-chip {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: inherit;
+  display: grid;
+  gap: 3px;
+  min-width: min(100%, 190px);
+  overflow-wrap: anywhere;
+  padding: 10px 12px;
+  text-decoration: none;
+}
+
+.topic-chip:hover {
+  background: var(--green-soft);
+  border-color: rgb(20 115 93 / 34%);
+  color: inherit;
+}
+
+.topic-chip span {
+  color: var(--gold);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.topic-reader {
+  display: grid;
+  gap: 24px;
+}
+
+.topic-header {
+  display: grid;
+  gap: 10px;
+}
+
+.topic-note-list {
+  display: grid;
+  gap: 10px;
+}
+
+.topic-note {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.topic-note p {
+  margin: 0;
+}
+
+.warning-note {
+  background: #fff7e4;
+  border-color: rgb(135 97 10 / 24%);
+}
+
+.static-bank-card {
+  background: var(--surface-strong);
+  padding: 14px;
+}
+
+.static-bank-card p {
+  color: var(--muted);
+  margin: 0;
+}
+
 .meta {
   color: var(--gold);
   font-size: 0.72rem;
