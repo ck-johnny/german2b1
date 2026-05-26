@@ -3,10 +3,14 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Reader · German2B1" description="Paste German lines and tap them for pronunciation.">
-  <section class="compact-page-title">
-    <h1>Reader</h1>
-    <p>Paste German. Play, rearrange, or expand each line for English and word audio.</p>
-  </section>
+  <header class="compact-page-title">
+    <span class="meta">Tool · Reader</span>
+    <h1>Paste-and-listen reader</h1>
+    <p>
+      Drop in any German line — we will split it into tappable words with English glosses. Useful for newspaper headlines,
+      song lines, or a sentence your friend texted you.
+    </p>
+  </header>
 
   <section class="reader-tool" aria-label="German listening reader">
     <textarea

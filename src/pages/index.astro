@@ -1,52 +1,137 @@
 ---
-import ModuleCard from "@components/ModuleCard.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { getModulesByLevel, levels, modules } from "@data/modules";
 import { topics } from "@data/topics";
 import { withBasePath } from "@utils/paths";
 
-const nextModules = modules.slice(0, 6);
-const priorityTopics = [
+const a1Modules = modules.filter((module) => module.level === "A1");
+const continueModule = a1Modules[0];
+const priorityTopicIds = [
   "pronunciation-alphabet",
   "sein-and-haben",
   "articles-der-die-das",
   "accusative-case",
   "sentence-position-two",
   "questions",
-]
+];
+const priorityTopics = priorityTopicIds
   .map((topicId) => topics.find((topic) => topic.id === topicId))
   .filter((topic) => topic !== undefined);
+
+const levelBlurbs: Record<string, string> = {
+  A1: "Pronunciation, names, errands, the verbs that hold every sentence together.",
+  A2: "Routine, past tense, opinions, and the connectors that make you sound natural.",
+  B1: "Argue, write formal mail, navigate authorities — and pass the citizenship exam.",
+};
+
+const levelHours: Record<string, string> = {
+  A1: "≈ 60 study hours",
+  A2: "≈ 70 study hours",
+  B1: "≈ 80 study hours",
+};
 ---
 
 <BaseLayout title="German2B1" description="A flexible module-based German learning path from zero to B1.">
-  <section class="level-path" aria-label="German learning path">
-    {
-      levels.map((level) => (
-        <a class="level-step" href={withBasePath(`/modules#${level.toLowerCase()}`)}>
-          <span class="meta">{level}</span>
-          <strong>{getModulesByLevel(level).length} modules</strong>
-        </a>
-      ))
-    }
+  <section class="hero">
+    <div class="hero-meta">
+      <span class="meta">The German Path · Edition 2026</span>
+      <span class="meta">A1 → B1 / {modules.length} modules</span>
+    </div>
+    <h1 class="display">
+      <span class="dropcap">A</span> level-by-level path from your first <em>Guten Tag</em> to the B1 oral exam.
+    </h1>
+    <p class="lead">
+      One module is one page is one achievable unit. Start where you are. The audio is German throughout;
+      the explanations stay in English.
+    </p>
+    <div class="rule-orn" aria-hidden="true"></div>
   </section>
 
   <section class="section">
-    <h2>Study by Topic</h2>
+    <h2>Three levels, eighteen modules</h2>
+    <div class="level-path" aria-label="German learning path">
+      {
+        levels.map((level, index) => (
+          <a class="level-step" href={withBasePath(`/modules#${level.toLowerCase()}`)}>
+            <div class="level-step-top">
+              <span class="meta">{level}</span>
+              <span class="meta">{String(index + 1).padStart(2, "0")} / 03</span>
+            </div>
+            <strong>{getModulesByLevel(level).length}</strong>
+            <span class="level-step-label">modules</span>
+            <p>{levelBlurbs[level]}</p>
+            <div class="level-step-foot">
+              <span>{levelHours[level]}</span>
+              <span class="arrow">→</span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    continueModule && (
+      <section class="section">
+        <div class="continue-card">
+          <span class="meta">Continue where you left off</span>
+          <div class="continue-row">
+            <div class="continue-id">
+              <span class="meta">{continueModule.id.toUpperCase()}</span>
+              <h3>{continueModule.title}</h3>
+              <p>{continueModule.summary}</p>
+            </div>
+            <div class="continue-prog">
+              <div class="prog-num">0 / {continueModule.tasks.length}</div>
+              <div class="prog-label">tasks done</div>
+              <div class="prog-bar"><span style="width: 0%"></span></div>
+            </div>
+            <a class="button" href={withBasePath(`/modules/${continueModule.id}`)}>Resume →</a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <h2>Pick a single grammar or communication topic</h2>
     <div class="grid">
-      {priorityTopics.map((topic) => (
-        <a class="card topic-card" href={withBasePath(`/topics/${topic.id}`)}>
-          <span class="meta">{topic.level} · {topic.category}</span>
-          <h3>{topic.title}</h3>
-          <p>{topic.summary}</p>
-        </a>
-      ))}
+      {
+        priorityTopics.map((topic) => (
+          <a class="topic-card" href={withBasePath(`/topics/${topic.id}`)}>
+            <div class="meta">
+              <span class="topic-level">{topic.level}</span>
+              <span>{topic.category}</span>
+            </div>
+            <h3>{topic.title}</h3>
+            <p>{topic.summary}</p>
+          </a>
+        ))
+      }
     </div>
   </section>
 
   <section class="section">
-    <h2>Start at A1</h2>
-    <div class="grid">
-      {nextModules.map((module) => <ModuleCard module={module} />)}
+    <h2>The first six modules</h2>
+    <div class="module-list">
+      {
+        a1Modules.slice(0, 6).map((module) => (
+          <a class="module-row" href={withBasePath(`/modules/${module.id}`)}>
+            <span class="module-n">{String(module.order).padStart(2, "0")}</span>
+            <div class="module-mid">
+              <div class="module-title-row">
+                <h3>{module.title}</h3>
+                <span class="module-theme">{module.theme}</span>
+              </div>
+              <p>{module.summary}</p>
+            </div>
+            <div class="module-right">
+              <span class="module-min">{module.tasks.reduce((sum, t) => sum + t.minutes, 0)} min</span>
+              <span class="arrow">→</span>
+            </div>
+          </a>
+        ))
+      }
     </div>
   </section>
 </BaseLayout>

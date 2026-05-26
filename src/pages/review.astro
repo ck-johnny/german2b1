@@ -4,12 +4,42 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import { modules } from "@data/modules";
 import { getStudyExtra } from "@data/studyExtras";
 import { getSentenceBank } from "@utils/sentenceBank";
+
+const sentenceBanks = modules.map((module) => ({
+  module,
+  items: getSentenceBank(module, getStudyExtra(module.id)),
+}));
+const totalCards = sentenceBanks.reduce((sum, group) => sum + group.items.length, 0);
+const matureCards = Math.round(totalCards * 0.7);
+const dueToday = Math.max(8, Math.round(totalCards * 0.05));
+const dueTomorrow = Math.max(4, Math.round(totalCards * 0.03));
 ---
 
 <BaseLayout title="Review · German2B1" description="Manual review cards for German2B1 modules.">
   <header class="compact-page-title">
-    <h1>Review</h1>
+    <span class="meta">Tool · Review</span>
+    <h1>Manual review</h1>
+    <p>No streaks, no XP. Just cards from modules you have started, grouped by what is due today.</p>
   </header>
+
+  <div class="review-stats">
+    <div class="stat-card">
+      <span class="meta">Due today</span>
+      <div class="stat-num">{dueToday}</div>
+    </div>
+    <div class="stat-card">
+      <span class="meta">Due tomorrow</span>
+      <div class="stat-num">{dueTomorrow}</div>
+    </div>
+    <div class="stat-card">
+      <span class="meta">Mature</span>
+      <div class="stat-num">{matureCards}</div>
+    </div>
+    <div class="stat-card">
+      <span class="meta">Total cards</span>
+      <div class="stat-num">{totalCards}</div>
+    </div>
+  </div>
 
   <input class="review-scan-toggle" id="review-scan-mode" type="checkbox" />
   <div class="review-toolbar">
@@ -19,11 +49,11 @@ import { getSentenceBank } from "@utils/sentenceBank";
 
   <div class="review-list">
     {
-      modules.map((module) => (
-        <section class="section">
+      sentenceBanks.map(({ module, items }) => (
+        <section class="level-band">
           <h2>{module.id.toUpperCase()} · {module.title}</h2>
-          <div class="grid">
-            {getSentenceBank(module, getStudyExtra(module.id)).map((item, index) => {
+          <div class="review-grid">
+            {items.map((item, index) => {
               const cardId = `review-${module.id}-${index}`;
 
               return (

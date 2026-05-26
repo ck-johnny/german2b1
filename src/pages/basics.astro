@@ -5,15 +5,16 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Basics · German2B1" description="Zero-knowledge German basics for A1 learners.">
-  <section class="compact-page-title">
-    <h1>A1 Basics</h1>
-    <p>Start here if German is completely new.</p>
-  </section>
+  <header class="compact-page-title">
+    <span class="meta">A1 · Foundations</span>
+    <h1>Basics</h1>
+    <p>If German is completely new, start here. Tap any German to hear it.</p>
+  </header>
 
   <section class="number-converter" aria-labelledby="number-converter-title">
     <div>
-      <h2 id="number-converter-title">Number Converter</h2>
-      <p>Type a number from 0 to 999999, then tap the German result to hear it.</p>
+      <h2 id="number-converter-title">Tool · Number converter</h2>
+      <p>Type a number — see and hear it in German.</p>
     </div>
     <label class="number-converter-field">
       <span>Number</span>
@@ -39,7 +40,7 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 
   {
     basicSections.map((section) => (
-      <section class="level-band">
+      <section class="section basics-section">
         <h2>{section.title}</h2>
         <div class="basic-grid">
           {section.items.map((item) => (

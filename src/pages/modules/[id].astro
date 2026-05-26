@@ -5,9 +5,11 @@ import ResourceList from "@components/ResourceList.astro";
 import StudyExtras from "@components/StudyExtras.astro";
 import TaskList from "@components/TaskList.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
-import { getModuleById, modules } from "@data/modules";
+import { getAdjacentModules, getModuleById, modules } from "@data/modules";
 import { getResourcesByIds } from "@data/resources";
 import { getStudyExtra } from "@data/studyExtras";
+import { topics } from "@data/topics";
+import { withBasePath } from "@utils/paths";
 import { getSentenceBank } from "@utils/sentenceBank";
 
 export function getStaticPaths() {
@@ -25,51 +27,41 @@ if (!module) {
 const officialResources = getResourcesByIds(module.resourceIds);
 const studyExtra = getStudyExtra(module.id);
 const sentenceBank = getSentenceBank(module, studyExtra);
+const { next: nextModule } = getAdjacentModules(module.id);
+const relatedTopics = topics
+  .filter((topic) => topic.moduleIds.includes(module.id))
+  .slice(0, 4);
+const totalMinutes = module.tasks.reduce((sum, task) => sum + task.minutes, 0);
 ---
 
 <BaseLayout title={`${module.id.toUpperCase()} · ${module.title} · German2B1`} description={module.summary}>
-  <div class="module-layout">
+  <nav class="crumb" aria-label="Breadcrumb">
+    <a href={withBasePath("/")}>Start</a>
+    <span>/</span>
+    <a href={withBasePath("/modules")}>Modules</a>
+    <span>/</span>
+    <span>{module.id.toUpperCase()}</span>
+  </nav>
+
+  <header class="mod-hero">
+    <div class="mod-meta">
+      <span class="mod-tag">{module.level}</span>
+      <span class="mod-tag mod-tag-soft">Module {String(module.order).padStart(2, "0")}</span>
+      <span class="meta">{module.theme}</span>
+    </div>
+    <h1>{module.title}</h1>
+    <p class="lead">{module.summary}</p>
+    <div class="goal">
+      <span class="meta">Goal</span>
+      <p>{module.goalEn}</p>
+      <div class="pill-row">
+        {module.targetItems.map((item) => <span class="pill">{item}</span>)}
+      </div>
+    </div>
+  </header>
+
+  <div class="module-layout module-grid">
     <article class="reader">
-      <details class="lesson-overview">
-        <summary>
-          <span class="eyebrow">{module.id.toUpperCase()} · {module.level} · {module.examBridge}</span>
-          <h1>{module.title}</h1>
-        </summary>
-
-        <p class="lesson-summary">{module.summary}</p>
-
-        <section class="module-metadata" aria-label="Module metadata">
-          <article class="metadata-card">
-            <h2>Goal</h2>
-            <p><strong>{module.goalEn}</strong></p>
-          </article>
-
-          <article class="metadata-card">
-            <h2>German Target Items</h2>
-            <div class="pill-row">
-              {module.targetItems.map((item) => <span class="pill">{item}</span>)}
-            </div>
-          </article>
-
-          <article class="metadata-card">
-            <h2>Study status</h2>
-            <p>
-              {sentenceBank.length} listenable sentences · {module.grammar.length} grammar notes · {module.tasks.length} tasks · {module.microChecks.length} checks
-            </p>
-          </article>
-
-          <article class="metadata-card">
-            <h2>Done when</h2>
-            <ul>
-              <li>Explain the module goal in English.</li>
-              <li>Recall the sentence bank without looking.</li>
-              <li>Say five useful sentences out loud at a comfortable speed.</li>
-              <li>Complete one production task and both micro-checks.</li>
-            </ul>
-          </article>
-        </section>
-      </details>
-
       <CheatSheet module={module} />
       <StudyExtras extra={studyExtra} module={module} />
       <TaskList tasks={module.tasks} />
@@ -91,5 +83,49 @@ const sentenceBank = getSentenceBank(module, studyExtra);
       </section>
     </article>
 
+    <aside class="mod-side">
+      <div class="side-card">
+        <span class="meta">Progress</span>
+        <div class="prog-num">0 / {module.tasks.length}</div>
+        <div class="prog-bar"><span style="width: 0%"></span></div>
+        <p class="side-text">
+          Mark a task as done once you have actually said or written the result aloud.
+        </p>
+      </div>
+      <div class="side-card">
+        <span class="meta">Exam bridge</span>
+        <p class="side-strong">{module.examBridge}</p>
+        <p class="side-text">
+          {sentenceBank.length} listenable sentences · {module.grammar.length} grammar notes · {totalMinutes} min of practice.
+        </p>
+      </div>
+      {
+        relatedTopics.length > 0 && (
+          <div class="side-card">
+            <span class="meta">Related topics</span>
+            <ul class="side-links">
+              {relatedTopics.map((topic) => (
+                <li>
+                  <a href={withBasePath(`/topics/${topic.id}`)}>{topic.title}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+      {
+        nextModule && (
+          <div class="side-card">
+            <span class="meta">Next module</span>
+            <p class="side-strong">
+              {nextModule.id.toUpperCase()} · {nextModule.title}
+            </p>
+            <a class="button secondary" href={withBasePath(`/modules/${nextModule.id}`)}>
+              Open →
+            </a>
+          </div>
+        )
+      }
+    </aside>
   </div>
 </BaseLayout>

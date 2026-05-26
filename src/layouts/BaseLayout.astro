@@ -15,12 +15,15 @@ const serviceWorkerUrl = withBasePath("/sw.js");
 const navItems = [
   { href: "/", label: "Start" },
   { href: "/topics", label: "Topics" },
+  { href: "/modules", label: "Modules" },
   { href: "/basics", label: "Basics" },
   { href: "/reader", label: "Reader" },
   { href: "/review", label: "Review" },
   { href: "/resources", label: "Resources" },
 ];
 const isModulesPath = currentPath.startsWith("/modules");
+const isActive = (href: string) =>
+  currentPath === href || (href !== "/" && currentPath.startsWith(href));
 ---
 
 <!doctype html>
@@ -29,7 +32,7 @@ const isModulesPath = currentPath.startsWith("/modules");
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#14735d" />
+    <meta name="theme-color" content="#7a2b1f" />
     <link rel="manifest" href={manifestUrl} />
     <link rel="icon" href={withBasePath("/icons/icon.svg")} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={withBasePath("/icons/icon.svg")} />
@@ -48,6 +51,27 @@ const isModulesPath = currentPath.startsWith("/modules");
             <span class="brand-mark" aria-hidden="true">B1</span>
             <span>German2B1</span>
           </a>
+          <div class="header-nav" role="navigation" aria-label="Primary">
+            {
+              navItems.map((item) => (
+                <a
+                  href={withBasePath(item.href)}
+                  class:list={["header-nav-item", isActive(item.href) && "is-active"]}
+                  aria-current={isActive(item.href) ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              ))
+            }
+          </div>
+          <div class="header-speed" aria-label="German audio speed">
+            <span class="header-speed-label">Audio</span>
+            <div class="bottom-speed-presets" role="group" aria-label="Playback speed presets">
+              <button type="button" data-speed-rate="0.5">0.5×</button>
+              <button type="button" data-speed-rate="0.75">0.75×</button>
+              <button type="button" data-speed-rate="1">1.0×</button>
+            </div>
+          </div>
         </nav>
       </header>
 
@@ -58,7 +82,7 @@ const isModulesPath = currentPath.startsWith("/modules");
             <span class="brand-mark" aria-hidden="true">B1</span>
             <span>German2B1</span>
           </a>
-          <button class="side-menu-close" type="button" aria-label="Close menu">x</button>
+          <button class="side-menu-close" type="button" aria-label="Close menu">×</button>
         </div>
 
         <div class="side-menu-section">
@@ -81,23 +105,19 @@ const isModulesPath = currentPath.startsWith("/modules");
               </div>
             </details>
             {
-              navItems.map((item) => (
-                <a
-                  href={withBasePath(item.href)}
-                  aria-current={
-                    currentPath === item.href ||
-                    (item.href !== "/" && currentPath.startsWith(item.href))
-                      ? "page"
-                      : undefined
-                  }
-                >
-                  {item.label}
-                </a>
-              ))
+              navItems
+                .filter((item) => item.href !== "/modules")
+                .map((item) => (
+                  <a
+                    href={withBasePath(item.href)}
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                  >
+                    {item.label}
+                  </a>
+                ))
             }
           </div>
         </div>
-
       </aside>
 
       <main class="page">
@@ -106,11 +126,11 @@ const isModulesPath = currentPath.startsWith("/modules");
       <nav class="bottom-audio-controls" aria-label="German audio speed">
         <span class="bottom-audio-label">Audio speed</span>
         <div class="bottom-speed-presets" role="group" aria-label="Playback speed presets">
-          <button type="button" data-speed-rate="0.25">0.25x</button>
-          <button type="button" data-speed-rate="0.5">0.5x</button>
-          <button type="button" data-speed-rate="0.75">0.75x</button>
-          <button type="button" data-speed-rate="1">1.0x</button>
-          <button type="button" data-speed-rate="1.5">1.5x</button>
+          <button type="button" data-speed-rate="0.25">0.25×</button>
+          <button type="button" data-speed-rate="0.5">0.5×</button>
+          <button type="button" data-speed-rate="0.75">0.75×</button>
+          <button type="button" data-speed-rate="1">1.0×</button>
+          <button type="button" data-speed-rate="1.5">1.5×</button>
         </div>
       </nav>
       <footer class="site-footer">
@@ -124,7 +144,7 @@ const isModulesPath = currentPath.startsWith("/modules");
       (() => {
         let fallbackAudio;
         const speedStorageKey = "german2b1-audio-rate";
-        const defaultRate = 0.7;
+        const defaultRate = 0.75;
         let cachedGermanVoice;
 
         const getCookieRate = () => {

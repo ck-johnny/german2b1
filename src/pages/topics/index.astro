@@ -1,48 +1,39 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
-import { getTopicsByCategory, topicCategories, topics } from "@data/topics";
+import { getTopicsByCategory, topicCategories } from "@data/topics";
 import { withBasePath } from "@utils/paths";
-
-const a1Topics = topics.filter((topic) => topic.level === "A1");
 ---
 
 <BaseLayout title="Topics · German2B1" description="Topic-based German grammar, vocabulary, and communication practice.">
   <header class="compact-page-title">
+    <span class="meta">Study by topic</span>
     <h1>Topics</h1>
-    <p>Jump straight to the grammar, vocabulary, or communication skill you want to practise.</p>
+    <p>When you would rather drill one thing than work through a whole module, start here.</p>
   </header>
 
-  <section class="section">
-    <h2>A1 Essentials</h2>
-    <div class="topic-strip">
-      {
-        a1Topics.map((topic) => (
-          <a class="topic-chip" href={withBasePath(`/topics/${topic.id}`)}>
-            <span>{topic.category}</span>
-            <strong>{topic.title}</strong>
-          </a>
-        ))
-      }
-    </div>
-  </section>
-
   {
-    topicCategories.map((category) => (
-      <section class="section">
-        <h2>{category}</h2>
-        <div class="grid">
-          {getTopicsByCategory(category).map((topic) => (
-            <a class="card topic-card" href={withBasePath(`/topics/${topic.id}`)}>
-              <span class="meta">{topic.level} · {topic.category}</span>
-              <h3>{topic.title}</h3>
-              <p>{topic.summary}</p>
-              <div class="pill-row">
-                {topic.focus.slice(0, 3).map((item) => <span class="pill">{item}</span>)}
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-    ))
+    topicCategories.map((category) => {
+      const list = getTopicsByCategory(category);
+      return (
+        <section class="section">
+          <h2>{category} · {list.length} topics</h2>
+          <div class="grid">
+            {list.map((topic) => (
+              <a class="topic-card" href={withBasePath(`/topics/${topic.id}`)}>
+                <div class="meta">
+                  <span class="topic-level">{topic.level}</span>
+                  <span>{topic.category}</span>
+                </div>
+                <h3>{topic.title}</h3>
+                <p>{topic.summary}</p>
+                <div class="pill-row">
+                  {topic.focus.slice(0, 3).map((item) => <span class="pill">{item}</span>)}
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      );
+    })
   }
 </BaseLayout>

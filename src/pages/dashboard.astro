@@ -4,24 +4,31 @@ import { levels, modules } from "@data/modules";
 ---
 
 <BaseLayout title="Dashboard · German2B1" description="Progress model for German2B1.">
-  <section class="hero">
+  <section class="dashboard-hero">
     <div>
-      <p class="eyebrow">Progress model</p>
+      <span class="meta">Progress model</span>
       <h1>Built for irregular study.</h1>
       <p class="lead">
-        The current dashboard is static documentation for the learner-state model.
-        Later, these blocks become real progress cards backed by local storage or a database.
+        The current dashboard is static documentation for the learner-state model. Later, these blocks become real
+        progress cards backed by local storage or a database.
       </p>
     </div>
     <aside class="panel">
       <div class="stats">
-        {levels.map((level) => <div class="stat"><span>{level} modules</span><strong>{modules.filter((module) => module.level === level).length}</strong></div>)}
+        {
+          levels.map((level) => (
+            <div class="stat">
+              <span>{level} modules</span>
+              <strong>{modules.filter((module) => module.level === level).length}</strong>
+            </div>
+          ))
+        }
       </div>
     </aside>
   </section>
 
   <section class="section">
-    <h2>State Modes</h2>
+    <h2>State modes</h2>
     <div class="grid">
       <article class="card">
         <span class="meta">normal</span>
@@ -47,20 +54,20 @@ import { levels, modules } from "@data/modules";
   </section>
 
   <section class="section">
-    <h2>Future Completion Logic</h2>
+    <h2>Future completion logic</h2>
     <div class="grid">
       <article class="card">
-        <span class="meta">1</span>
+        <span class="meta">01</span>
         <h3>Objective quiz</h3>
         <p>Can the learner answer the module micro-checks?</p>
       </article>
       <article class="card">
-        <span class="meta">2</span>
+        <span class="meta">02</span>
         <h3>Production task</h3>
         <p>Can the learner write or say something useful from the module?</p>
       </article>
       <article class="card">
-        <span class="meta">3</span>
+        <span class="meta">03</span>
         <h3>Retention check</h3>
         <p>Can the learner recall the key cards after a delay?</p>
       </article>
