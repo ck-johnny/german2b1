@@ -232,20 +232,22 @@ import BaseLayout from "@layouts/BaseLayout.astro";
         list.setAttribute("aria-label", `German words in ${line}`);
 
         tokenizeGerman(line).forEach((word) => {
-          const chip = document.createElement("span");
-          chip.className = "reader-word-chip";
+          // The whole chip is the speak trigger, so a tap anywhere on the tile
+          // (word or gloss) plays the audio — not just the word itself.
+          const chip = document.createElement("button");
+          chip.className = "reader-word-chip speak-de";
+          chip.type = "button";
+          chip.dataset.speakDe = word;
+          chip.setAttribute("aria-label", `Play German audio: ${word}`);
 
-          const button = document.createElement("button");
-          button.className = "speak-de";
-          button.type = "button";
-          button.dataset.speakDe = word;
-          button.textContent = word;
-          button.setAttribute("aria-label", `Play German audio: ${word}`);
+          const wordText = document.createElement("span");
+          wordText.className = "reader-word-text";
+          wordText.textContent = word;
 
           const gloss = document.createElement("small");
           gloss.textContent = wordGlosses.get(word.toLocaleLowerCase("de-DE")) ?? "tap to hear";
 
-          chip.append(button, gloss);
+          chip.append(wordText, gloss);
           list.append(chip);
         });
 

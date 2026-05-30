@@ -1946,6 +1946,19 @@ em {
   text-align: left;
 }
 
+/* This button carries its own play affordance (circular icon + accent text),
+   so neutralize the generic .speak-de triangle and full-width fill it inherits.
+   Without this, the playing fill matches the text colour (invisible text) and
+   stretches into a full-width bar across the 1fr grid column. */
+.reader-line-play::before {
+  display: none;
+}
+
+.reader-line-play:hover,
+.reader-line-play.is-playing {
+  background: transparent;
+}
+
 .reader-line-play:hover .reader-line-text,
 .reader-line-play:focus-visible .reader-line-text {
   color: var(--accent);
@@ -2057,10 +2070,20 @@ em {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 4px;
   padding: 6px 10px;
   background: var(--paper-sunk);
   border: 1px solid var(--rule);
   border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--ink);
+  font-family: var(--font-h);
+  text-align: left;
+}
+
+/* The chip itself is the speak trigger, so suppress the .speak-de triangle. */
+.reader-word-chip::before {
+  display: none;
 }
 
 .reader-word-chip:hover {
@@ -2068,21 +2091,14 @@ em {
   border-color: var(--accent);
 }
 
-.reader-word-chip .speak-de {
-  background: transparent;
-  padding: 0;
+.reader-word-text {
   font-family: var(--font-h);
   font-size: 1rem;
-  color: var(--ink);
+  color: inherit;
 }
 
-.reader-word-chip .speak-de::before {
-  display: none;
-}
-
-.reader-word-chip .speak-de:hover {
+.reader-word-chip:hover .reader-word-text {
   color: var(--accent);
-  background: transparent;
 }
 
 .reader-word-chip small {
@@ -2091,7 +2107,16 @@ em {
   font-size: 10.5px;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  margin-top: 4px;
+}
+
+.reader-word-chip.is-playing {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.reader-word-chip.is-playing .reader-word-text,
+.reader-word-chip.is-playing small {
+  color: var(--paper);
 }
 
 .reader-line.is-dragging {
