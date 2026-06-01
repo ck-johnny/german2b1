@@ -42,7 +42,8 @@ import BaseLayout from "@layouts/BaseLayout.astro";
     basicSections.map((section) => (
       <section class="section basics-section">
         <h2>{section.title}</h2>
-        <div class="basic-grid">
+        {section.intro && <p class="basics-intro">{section.intro}</p>}
+        <div class:list={["basic-grid", section.wide && "is-wide"]}>
           {section.items.map((item) => (
             <article
               aria-label={`Play German audio: ${item.speechText ?? item.de}`}

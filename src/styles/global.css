@@ -1797,10 +1797,21 @@ em {
   content: none;
 }
 
+.basics-intro {
+  color: var(--ink-2);
+  font-size: 1rem;
+  margin: -8px 0 0;
+  max-width: 74ch;
+}
+
 .basic-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 8px;
+}
+
+.basic-grid.is-wide {
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
 }
 
 .basic-card {
@@ -1815,6 +1826,9 @@ em {
   font-family: var(--font-h);
   font-size: 1.05rem;
   color: var(--ink);
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .basic-card:hover {
@@ -2475,6 +2489,10 @@ em {
 
   .basic-grid {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+
+  .basic-grid.is-wide {
+    grid-template-columns: 1fr;
   }
 
   .hero .display,
