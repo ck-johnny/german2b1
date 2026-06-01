@@ -1,161 +1,37 @@
 ---
-import GermanText from "@components/GermanText.astro";
-import { basicSections } from "@data/basics";
+import { basicModules } from "@data/basics";
 import BaseLayout from "@layouts/BaseLayout.astro";
+import { withBasePath } from "@utils/paths";
 ---
 
-<BaseLayout title="Basics · German2B1" description="Zero-knowledge German basics for A1 learners.">
+<BaseLayout title="Basics · German2B1" description="Zero-knowledge German basics split into compact A1 study modules.">
   <header class="compact-page-title">
     <span class="meta">A1 · Foundations</span>
     <h1>Basics</h1>
-    <p>If German is completely new, start here. Tap any German to hear it.</p>
+    <p>If German is completely new, start here. Each basics module is short enough to study directly.</p>
   </header>
 
-  <section class="number-converter" aria-labelledby="number-converter-title">
-    <div>
-      <h2 id="number-converter-title">Tool · Number converter</h2>
-      <p>Type a number — see and hear it in German.</p>
+  <section class="level-band">
+    <h2>A1 Basics · {basicModules.length} modules</h2>
+    <div class="module-list">
+      {
+        basicModules.map((module) => (
+          <a class="module-row" href={withBasePath(`/basics/${module.id}`)}>
+            <span class="module-n">{String(module.order).padStart(2, "0")}</span>
+            <div class="module-mid">
+              <div class="module-title-row">
+                <h3>{module.title}</h3>
+                <span class="module-theme">{module.focus.slice(0, 2).join(" · ")}</span>
+              </div>
+              <p>{module.summary}</p>
+            </div>
+            <div class="module-right">
+              <span class="module-min">{module.sectionIds.length} sections</span>
+              <span class="arrow">→</span>
+            </div>
+          </a>
+        ))
+      }
     </div>
-    <label class="number-converter-field">
-      <span>Number</span>
-      <input
-        data-number-input
-        inputmode="numeric"
-        maxlength="6"
-        min="0"
-        max="999999"
-        placeholder="42"
-        type="number"
-      />
-    </label>
-    <button
-      class="number-result speak-de"
-      data-number-result
-      data-speak-de="zweiundvierzig"
-      type="button"
-    >
-      zweiundvierzig
-    </button>
   </section>
-
-  {
-    basicSections.map((section) => (
-      <section class="section basics-section">
-        <h2>{section.title}</h2>
-        {section.intro && <p class="basics-intro">{section.intro}</p>}
-        <div class:list={["basic-grid", section.wide && "is-wide"]}>
-          {section.items.map((item) => (
-            <article
-              aria-label={`Play German audio: ${item.speechText ?? item.de}`}
-              class="basic-card"
-              data-speak-de={item.speechText ?? item.de}
-              role="button"
-              tabindex="0"
-              title="Tap to hear German"
-            >
-              <GermanText text={item.speechText ?? item.de} display={item.de} strong interactive={false} />
-              <span>{item.en}</span>
-              {item.note && <small>{item.note}</small>}
-            </article>
-          ))}
-        </div>
-      </section>
-    ))
-  }
-
-  <script>
-    const units = [
-      "null",
-      "eins",
-      "zwei",
-      "drei",
-      "vier",
-      "fünf",
-      "sechs",
-      "sieben",
-      "acht",
-      "neun",
-    ];
-    const teens = [
-      "zehn",
-      "elf",
-      "zwölf",
-      "dreizehn",
-      "vierzehn",
-      "fünfzehn",
-      "sechzehn",
-      "siebzehn",
-      "achtzehn",
-      "neunzehn",
-    ];
-    const tens = [
-      "",
-      "",
-      "zwanzig",
-      "dreißig",
-      "vierzig",
-      "fünfzig",
-      "sechzig",
-      "siebzig",
-      "achtzig",
-      "neunzig",
-    ];
-
-    const convertUnderHundred = (value: number) => {
-      if (value < 10) return units[value];
-      if (value < 20) return teens[value - 10];
-
-      const one = value % 10;
-      const ten = Math.floor(value / 10);
-      if (one === 0) return tens[ten];
-
-      return `${one === 1 ? "ein" : units[one]}und${tens[ten]}`;
-    };
-
-    const convertUnderThousand = (value: number) => {
-      if (value < 100) return convertUnderHundred(value);
-
-      const hundred = Math.floor(value / 100);
-      const remainder = value % 100;
-      const prefix = `${hundred === 1 ? "ein" : units[hundred]}hundert`;
-
-      return remainder === 0 ? prefix : `${prefix}${convertUnderHundred(remainder)}`;
-    };
-
-    const convertNumberToGerman = (value: number) => {
-      if (!Number.isInteger(value) || value < 0 || value > 999999) {
-        return "Enter 0 to 999999";
-      }
-
-      if (value < 1000) return convertUnderThousand(value);
-
-      const thousands = Math.floor(value / 1000);
-      const remainder = value % 1000;
-      const prefix = `${thousands === 1 ? "ein" : convertUnderThousand(thousands)}tausend`;
-
-      return remainder === 0 ? prefix : `${prefix}${convertUnderThousand(remainder)}`;
-    };
-
-    const input = document.querySelector("[data-number-input]");
-    const result = document.querySelector("[data-number-result]");
-
-    const syncNumberResult = () => {
-      if (!(input instanceof HTMLInputElement) || !(result instanceof HTMLElement)) return;
-
-      const value = input.value === "" ? 42 : Number(input.value);
-      const converted = convertNumberToGerman(value);
-      result.textContent = converted;
-
-      if (converted.startsWith("Enter")) {
-        result.removeAttribute("data-speak-de");
-        result.setAttribute("aria-disabled", "true");
-      } else {
-        result.dataset.speakDe = converted;
-        result.removeAttribute("aria-disabled");
-      }
-    };
-
-    input?.addEventListener("input", syncNumberResult);
-    syncNumberResult();
-  </script>
 </BaseLayout>

@@ -1,0 +1,33 @@
+---
+import GermanText from "@components/GermanText.astro";
+import type { BasicSection } from "@data/basics";
+
+type Props = {
+  section: BasicSection;
+};
+
+const { section } = Astro.props;
+---
+
+<section class="section basics-section">
+  <h2>{section.title}</h2>
+  {section.intro && <p class="basics-intro">{section.intro}</p>}
+  <div class:list={["basic-grid", section.wide && "is-wide"]}>
+    {
+      section.items.map((item) => (
+        <article
+          aria-label={`Play German audio: ${item.speechText ?? item.de}`}
+          class="basic-card"
+          data-speak-de={item.speechText ?? item.de}
+          role="button"
+          tabindex="0"
+          title="Tap to hear German"
+        >
+          <GermanText text={item.speechText ?? item.de} display={item.de} strong interactive={false} />
+          <span>{item.en}</span>
+          {item.note && <small>{item.note}</small>}
+        </article>
+      ))
+    }
+  </div>
+</section>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "german2b1-shell-v2";
+const CACHE_NAME = "german2b1-shell-v3";
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL = [
   "./",

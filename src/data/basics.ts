@@ -7,6 +7,7 @@ export type BasicItem = {
 };
 
 export type BasicSection = {
+  id: string;
   title: string;
   titleZh: string;
   intro?: string;
@@ -14,8 +15,42 @@ export type BasicSection = {
   items: BasicItem[];
 };
 
+export type BasicModule = {
+  id: string;
+  order: number;
+  title: string;
+  summary: string;
+  level: "A1";
+  focus: string[];
+  sectionIds: string[];
+  tool?: "number-converter" | "date-converter" | "time-reference";
+};
+
+export type DateDayItem = {
+  day: number;
+  nominative: string;
+  dative: string;
+  example: string;
+};
+
+export type WeekdayItem = {
+  de: string;
+  en: string;
+  type: "workday" | "weekend";
+  example: string;
+};
+
+export type TimeExpressionRow = {
+  clock: string;
+  formal: string;
+  informal: string;
+  meaning: string;
+  note?: string;
+};
+
 export const basicSections: BasicSection[] = [
   {
+    id: "alphabet",
     title: "Alphabet",
     titleZh: "字母",
     items: [
@@ -58,6 +93,7 @@ export const basicSections: BasicSection[] = [
     })),
   },
   {
+    id: "numbers",
     title: "Numbers",
     titleZh: "數字",
     items: [
@@ -88,6 +124,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "weekdays",
     title: "Weekdays",
     titleZh: "星期",
     items: [
@@ -101,6 +138,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "months",
     title: "Months",
     titleZh: "月份",
     items: [
@@ -119,6 +157,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "date-basics",
     title: "Date Basics",
     titleZh: "日期基礎",
     intro:
@@ -155,6 +194,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "formal-date-expressions",
     title: "Formal Date Expressions",
     titleZh: "正式日期表達",
     intro:
@@ -215,6 +255,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "informal-date-expressions",
     title: "Informal Date Expressions",
     titleZh: "非正式日期表達",
     intro:
@@ -236,6 +277,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "time-basics",
     title: "Time Basics",
     titleZh: "時間基礎",
     intro:
@@ -257,6 +299,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "formal-time-expressions",
     title: "Formal Time Expressions",
     titleZh: "正式時間表達",
     intro:
@@ -300,6 +343,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "informal-time-expressions",
     title: "Informal Time Expressions",
     titleZh: "非正式時間表達",
     intro:
@@ -323,6 +367,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "time-of-day",
     title: "Time of Day",
     titleZh: "一天中的時間",
     intro:
@@ -344,6 +389,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "scheduling-phrases",
     title: "Scheduling Phrases",
     titleZh: "安排時間短句",
     intro:
@@ -420,6 +466,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "seasons",
     title: "Seasons",
     titleZh: "季節",
     items: [
@@ -434,6 +481,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "pronouns-with-sein",
     title: "Pronouns with sein",
     titleZh: "代名詞",
     items: [
@@ -448,6 +496,7 @@ export const basicSections: BasicSection[] = [
     ],
   },
   {
+    id: "first-phrases",
     title: "First Phrases",
     titleZh: "入門短句",
     items: [
@@ -461,5 +510,214 @@ export const basicSections: BasicSection[] = [
       { de: "Ich spreche ein bisschen Deutsch.", en: "I speak a little German.", zh: "我會說一點德語。" },
       { de: "Können Sie das bitte wiederholen?", en: "Can you repeat that, please?", zh: "您可以重複一次嗎？" },
     ],
+  },
+];
+
+export const basicModules: BasicModule[] = [
+  {
+    id: "alphabet",
+    order: 1,
+    title: "Alphabet and Sounds",
+    summary: "Letters, umlauts, ß, spelling aloud, and first pronunciation anchors.",
+    level: "A1",
+    focus: ["letters", "umlauts", "spelling"],
+    sectionIds: ["alphabet"],
+  },
+  {
+    id: "numbers",
+    order: 2,
+    title: "Numbers",
+    summary: "Numbers from zero upward, with a converter for checking larger numbers.",
+    level: "A1",
+    focus: ["0-1000+", "number words", "listening"],
+    sectionIds: ["numbers"],
+    tool: "number-converter",
+  },
+  {
+    id: "dates",
+    order: 3,
+    title: "Dates and Weekdays",
+    summary: "Weekdays, months, ordinal dates, workdays/weekends, and date phrases.",
+    level: "A1",
+    focus: ["weekdays", "months", "ordinal dates"],
+    sectionIds: ["weekdays", "months", "date-basics", "formal-date-expressions", "informal-date-expressions"],
+    tool: "date-converter",
+  },
+  {
+    id: "time",
+    order: 4,
+    title: "Time",
+    summary: "Formal 24-hour time, informal spoken time, parts of the day, and scheduling phrases.",
+    level: "A1",
+    focus: ["Uhr", "formal time", "informal time"],
+    sectionIds: ["time-basics", "formal-time-expressions", "informal-time-expressions", "time-of-day", "scheduling-phrases"],
+    tool: "time-reference",
+  },
+  {
+    id: "seasons",
+    order: 5,
+    title: "Seasons and Weather Words",
+    summary: "The four seasons and simple temperature adjectives.",
+    level: "A1",
+    focus: ["seasons", "temperature", "im + season"],
+    sectionIds: ["seasons"],
+  },
+  {
+    id: "pronouns",
+    order: 6,
+    title: "Pronouns with sein",
+    summary: "First subject pronouns and the most useful present-tense forms of sein.",
+    level: "A1",
+    focus: ["ich bin", "du bist", "Sie sind"],
+    sectionIds: ["pronouns-with-sein"],
+  },
+  {
+    id: "first-phrases",
+    order: 7,
+    title: "First Phrases",
+    summary: "Immediate survival phrases for greetings, thanks, apologies, and repetition.",
+    level: "A1",
+    focus: ["greetings", "politeness", "repair phrases"],
+    sectionIds: ["first-phrases"],
+  },
+];
+
+export const getBasicModuleById = (id: string) => basicModules.find((module) => module.id === id);
+
+export const getBasicSectionsForModule = (module: BasicModule) =>
+  module.sectionIds
+    .map((sectionId) => basicSections.find((section) => section.id === sectionId))
+    .filter((section): section is BasicSection => Boolean(section));
+
+export const dateDayItems: DateDayItem[] = [
+  ["erste", "ersten"],
+  ["zweite", "zweiten"],
+  ["dritte", "dritten"],
+  ["vierte", "vierten"],
+  ["fünfte", "fünften"],
+  ["sechste", "sechsten"],
+  ["siebte", "siebten"],
+  ["achte", "achten"],
+  ["neunte", "neunten"],
+  ["zehnte", "zehnten"],
+  ["elfte", "elften"],
+  ["zwölfte", "zwölften"],
+  ["dreizehnte", "dreizehnten"],
+  ["vierzehnte", "vierzehnten"],
+  ["fünfzehnte", "fünfzehnten"],
+  ["sechzehnte", "sechzehnten"],
+  ["siebzehnte", "siebzehnten"],
+  ["achtzehnte", "achtzehnten"],
+  ["neunzehnte", "neunzehnten"],
+  ["zwanzigste", "zwanzigsten"],
+  ["einundzwanzigste", "einundzwanzigsten"],
+  ["zweiundzwanzigste", "zweiundzwanzigsten"],
+  ["dreiundzwanzigste", "dreiundzwanzigsten"],
+  ["vierundzwanzigste", "vierundzwanzigsten"],
+  ["fünfundzwanzigste", "fünfundzwanzigsten"],
+  ["sechsundzwanzigste", "sechsundzwanzigsten"],
+  ["siebenundzwanzigste", "siebenundzwanzigsten"],
+  ["achtundzwanzigste", "achtundzwanzigsten"],
+  ["neunundzwanzigste", "neunundzwanzigsten"],
+  ["dreißigste", "dreißigsten"],
+  ["einunddreißigste", "einunddreißigsten"],
+].map(([nominative, dative], index) => ({
+  day: index + 1,
+  nominative,
+  dative,
+  example: `Heute ist der ${nominative} Juni.`,
+}));
+
+export const weekdayItems: WeekdayItem[] = [
+  { de: "Montag", en: "Monday", type: "workday", example: "Am Montag arbeite ich." },
+  { de: "Dienstag", en: "Tuesday", type: "workday", example: "Am Dienstag habe ich Deutschkurs." },
+  { de: "Mittwoch", en: "Wednesday", type: "workday", example: "Am Mittwoch lerne ich." },
+  { de: "Donnerstag", en: "Thursday", type: "workday", example: "Am Donnerstag habe ich Zeit." },
+  { de: "Freitag", en: "Friday", type: "workday", example: "Am Freitag passt es mir." },
+  { de: "Samstag", en: "Saturday", type: "weekend", example: "Am Samstag schlafe ich länger." },
+  { de: "Sonntag", en: "Sunday", type: "weekend", example: "Am Sonntag ruhe ich mich aus." },
+];
+
+export const timeExpressionRows: TimeExpressionRow[] = [
+  {
+    clock: "08:00",
+    formal: "acht Uhr",
+    informal: "acht",
+    meaning: "eight o'clock",
+    note: "Use the part of day if context is unclear: acht Uhr morgens.",
+  },
+  {
+    clock: "08:05",
+    formal: "acht Uhr fünf",
+    informal: "fünf nach acht",
+    meaning: "five past eight",
+  },
+  {
+    clock: "08:10",
+    formal: "acht Uhr zehn",
+    informal: "zehn nach acht",
+    meaning: "ten past eight",
+  },
+  {
+    clock: "08:15",
+    formal: "acht Uhr fünfzehn",
+    informal: "Viertel nach acht",
+    meaning: "quarter past eight",
+  },
+  {
+    clock: "08:20",
+    formal: "acht Uhr zwanzig",
+    informal: "zwanzig nach acht",
+    meaning: "twenty past eight",
+  },
+  {
+    clock: "08:25",
+    formal: "acht Uhr fünfundzwanzig",
+    informal: "fünf vor halb neun",
+    meaning: "twenty-five past eight",
+  },
+  {
+    clock: "08:30",
+    formal: "acht Uhr dreißig",
+    informal: "halb neun",
+    meaning: "half past eight",
+    note: "German halb neun means halfway to nine.",
+  },
+  {
+    clock: "08:35",
+    formal: "acht Uhr fünfunddreißig",
+    informal: "fünf nach halb neun",
+    meaning: "thirty-five past eight",
+  },
+  {
+    clock: "08:40",
+    formal: "acht Uhr vierzig",
+    informal: "zwanzig vor neun",
+    meaning: "twenty to nine",
+  },
+  {
+    clock: "08:45",
+    formal: "acht Uhr fünfundvierzig",
+    informal: "Viertel vor neun",
+    meaning: "quarter to nine",
+  },
+  {
+    clock: "08:50",
+    formal: "acht Uhr fünfzig",
+    informal: "zehn vor neun",
+    meaning: "ten to nine",
+  },
+  {
+    clock: "08:55",
+    formal: "acht Uhr fünfundfünfzig",
+    informal: "fünf vor neun",
+    meaning: "five to nine",
+  },
+  {
+    clock: "09:00",
+    formal: "neun Uhr",
+    informal: "Punkt neun",
+    meaning: "nine sharp",
+    note: "Punkt makes the time sound exact.",
   },
 ];

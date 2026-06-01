@@ -1,0 +1,166 @@
+---
+import GermanText from "@components/GermanText.astro";
+import ModuleCard from "@components/ModuleCard.astro";
+import { getGrammarModuleById, grammarModules } from "@data/grammar";
+import { getModuleById } from "@data/modules";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { withBasePath } from "@utils/paths";
+import { isLikelyGermanText } from "@utils/language";
+
+export function getStaticPaths() {
+  return grammarModules.map((module) => ({
+    params: { id: module.id },
+  }));
+}
+
+const grammar = getGrammarModuleById(Astro.params.id ?? "");
+
+if (!grammar) {
+  return Astro.redirect("/grammar");
+}
+
+const linkedModules = grammar.moduleIds
+  .map((moduleId) => getModuleById(moduleId))
+  .filter((module) => module !== undefined);
+const nextGrammar = grammarModules.find((module) => module.order === grammar.order + 1);
+---
+
+<BaseLayout title={`${grammar.title} · Grammar · German2B1`} description={grammar.summary}>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <a href={withBasePath("/")}>Start</a>
+    <span>/</span>
+    <a href={withBasePath("/grammar")}>Grammar</a>
+    <span>/</span>
+    <span>{grammar.title}</span>
+  </nav>
+
+  <div class="module-layout module-grid">
+    <article class="reader topic-reader">
+      <header class="topic-header">
+        <span class="meta">{grammar.level} · Grammar {String(grammar.order).padStart(2, "0")} · {grammar.stage}</span>
+        <h1>{grammar.title}</h1>
+        <p class="lead">{grammar.summary}</p>
+        <div class="goal grammar-goal">
+          <span class="meta">Learning goal</span>
+          <p>{grammar.learningGoal}</p>
+        </div>
+        <div class="pill-row">
+          {grammar.focus.map((item) => <span class="pill">{item}</span>)}
+        </div>
+      </header>
+
+      {
+        grammar.explanation && (
+          <section>
+            <h2>Learn</h2>
+            <div class="topic-note-list">
+              {grammar.explanation.map((item) => (
+                <article class="topic-note">
+                  <p>{item}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <section>
+        <h2>Patterns</h2>
+        <div class="language-bank">
+          {
+            grammar.patterns.map((pattern) => (
+              <article class="bank-card static-bank-card">
+                <span class="meta">{pattern.label}</span>
+                <GermanText text={pattern.de} strong block />
+                <p>{pattern.en}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      {
+        grammar.commonMistakes && (
+          <section>
+            <h2>Common Traps</h2>
+            <div class="topic-note-list">
+              {grammar.commonMistakes.map((item) => (
+                <article class="topic-note warning-note">
+                  <p>{item}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <section>
+        <h2>Practice Ladder</h2>
+        <div class="task-list">
+          {
+            grammar.practice.map((item, index) => (
+              <article class="task">
+                <span class="meta">Step {index + 1}</span>
+                <p>{item}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      {
+        grammar.checks && (
+          <section>
+            <h2>Micro-Check</h2>
+            <div class="grid">
+              {grammar.checks.map((check) => (
+                <details class="check-card">
+                  <summary>{check.prompt}</summary>
+                  <div class="answer">
+                    {isLikelyGermanText(check.answer) ? (
+                      <GermanText text={check.answer} strong />
+                    ) : (
+                      check.answer
+                    )}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <section>
+        <h2>Course Modules</h2>
+        <div class="grid">
+          {linkedModules.map((module) => <ModuleCard module={module} />)}
+        </div>
+      </section>
+    </article>
+
+    <aside class="mod-side">
+      <div class="side-card">
+        <span class="meta">Grammar path</span>
+        <div class="prog-num">{String(grammar.order).padStart(2, "0")} / {grammarModules.length}</div>
+        <div class="prog-bar"><span style={`width: ${(grammar.order / grammarModules.length) * 100}%`}></span></div>
+        <p class="side-text">{grammar.stage}</p>
+      </div>
+      <div class="side-card">
+        <span class="meta">Study rhythm</span>
+        <p class="side-strong">{grammar.patterns.length} patterns · {grammar.practice.length} practice steps</p>
+        <p class="side-text">Read the rule, say the patterns aloud, then do the practice without looking.</p>
+      </div>
+      {
+        nextGrammar && (
+          <div class="side-card">
+            <span class="meta">Next grammar module</span>
+            <p class="side-strong">{nextGrammar.title}</p>
+            <a class="button secondary" href={withBasePath(`/grammar/${nextGrammar.id}`)}>
+              Open →
+            </a>
+          </div>
+        )
+      }
+    </aside>
+  </div>
+</BaseLayout>

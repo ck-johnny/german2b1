@@ -1,0 +1,404 @@
+---
+import BasicSectionView from "@components/BasicSectionView.astro";
+import GermanText from "@components/GermanText.astro";
+import {
+  basicModules,
+  dateDayItems,
+  getBasicModuleById,
+  getBasicSectionsForModule,
+  timeExpressionRows,
+  weekdayItems,
+} from "@data/basics";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { withBasePath } from "@utils/paths";
+
+export function getStaticPaths() {
+  return basicModules.map((module) => ({
+    params: { id: module.id },
+  }));
+}
+
+const module = getBasicModuleById(Astro.params.id ?? "");
+
+if (!module) {
+  return Astro.redirect("/basics");
+}
+
+const sections = getBasicSectionsForModule(module);
+const nextModule = basicModules.find((item) => item.order === module.order + 1);
+---
+
+<BaseLayout title={`${module.title} · Basics · German2B1`} description={module.summary}>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <a href={withBasePath("/")}>Start</a>
+    <span>/</span>
+    <a href={withBasePath("/basics")}>Basics</a>
+    <span>/</span>
+    <span>{module.title}</span>
+  </nav>
+
+  <header class="mod-hero">
+    <div class="mod-meta">
+      <span class="mod-tag">{module.level}</span>
+      <span class="mod-tag mod-tag-soft">Basics {String(module.order).padStart(2, "0")}</span>
+    </div>
+    <h1>{module.title}</h1>
+    <p class="lead">{module.summary}</p>
+    <div class="pill-row">
+      {module.focus.map((item) => <span class="pill">{item}</span>)}
+    </div>
+  </header>
+
+  <div class="module-layout module-grid">
+    <article class="reader">
+      {
+        module.tool === "number-converter" && (
+          <section class="number-converter" aria-labelledby="number-converter-title">
+            <div>
+              <h2 id="number-converter-title">Tool · Number converter</h2>
+              <p>Type a number to see and hear it in German.</p>
+            </div>
+            <label class="number-converter-field">
+              <span>Number</span>
+              <input
+                data-number-input
+                inputmode="numeric"
+                maxlength="6"
+                min="0"
+                max="999999"
+                placeholder="42"
+                type="number"
+              />
+            </label>
+            <button
+              class="number-result speak-de"
+              data-number-result
+              data-speak-de="zweiundvierzig"
+              type="button"
+            >
+              <span class="number-result-value" data-number-result-text>zweiundvierzig</span>
+            </button>
+          </section>
+        )
+      }
+
+      {
+        module.tool === "date-converter" && (
+          <>
+            <section class="number-converter date-converter" aria-labelledby="date-converter-title">
+              <div>
+                <h2 id="date-converter-title">Tool · Date converter</h2>
+                <p>Pick a date to convert it into spoken German.</p>
+              </div>
+              <label class="number-converter-field">
+                <span>Date</span>
+                <input data-date-input type="date" />
+              </label>
+              <button
+                class="number-result speak-de"
+                data-date-result
+                data-speak-de="Montag, der erste Juni zweitausendsechsundzwanzig"
+                type="button"
+              >
+                <span class="number-result-value" data-date-result-text>
+                  Montag, der erste Juni zweitausendsechsundzwanzig
+                </span>
+              </button>
+            </section>
+
+            <section class="section basics-section">
+              <h2>Dates 1-31</h2>
+              <p class="basics-intro">
+                Use <strong>der</strong> when naming the date and <strong>am</strong> when saying when something happens.
+              </p>
+              <div class="date-grid">
+                {dateDayItems.map((item) => (
+                  <article class="date-card">
+                    <span class="date-number">{item.day}</span>
+                    <div>
+                      <GermanText text={`der ${item.nominative}`} strong block />
+                      <GermanText text={`am ${item.dative}`} block />
+                      <small>{item.example}</small>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section class="section basics-section">
+              <h2>Weekdays</h2>
+              <p class="basics-intro">Monday to Friday are workdays. Saturday and Sunday are the weekend.</p>
+              <div class="basic-grid">
+                {weekdayItems.map((item) => (
+                  <article class="basic-card weekday-card" data-weekday-type={item.type}>
+                    <GermanText text={item.de} strong block />
+                    <span>{item.en}</span>
+                    <small>{item.type}</small>
+                    <GermanText text={item.example} block />
+                  </article>
+                ))}
+              </div>
+            </section>
+          </>
+        )
+      }
+
+      {
+        module.tool === "time-reference" && (
+          <section class="section basics-section">
+            <h2>Formal and Informal Time</h2>
+            <p class="basics-intro">
+              Formal time is exact and common in schedules. Informal time is common in everyday speech.
+            </p>
+            <div class="time-table">
+              <div class="time-table-head" aria-hidden="true">
+                <span>Clock</span>
+                <span>Formal</span>
+                <span>Informal</span>
+                <span>Meaning</span>
+              </div>
+              {timeExpressionRows.map((row) => (
+                <article class="time-row">
+                  <span class="time-clock">{row.clock}</span>
+                  <GermanText text={row.formal} strong />
+                  <GermanText text={row.informal} strong />
+                  <span>{row.meaning}</span>
+                  {row.note && <small>{row.note}</small>}
+                </article>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {sections.map((section) => <BasicSectionView section={section} />)}
+    </article>
+
+    <aside class="mod-side">
+      <div class="side-card">
+        <span class="meta">Basics path</span>
+        <div class="prog-num">{String(module.order).padStart(2, "0")} / {basicModules.length}</div>
+        <div class="prog-bar"><span style={`width: ${(module.order / basicModules.length) * 100}%`}></span></div>
+        <p class="side-text">Study one compact basics module, then move to the next piece.</p>
+      </div>
+      <div class="side-card">
+        <span class="meta">This module</span>
+        <p class="side-strong">{sections.length} study sections</p>
+        <p class="side-text">{module.focus.join(" · ")}</p>
+      </div>
+      {
+        nextModule && (
+          <div class="side-card">
+            <span class="meta">Next basics module</span>
+            <p class="side-strong">{nextModule.title}</p>
+            <a class="button secondary" href={withBasePath(`/basics/${nextModule.id}`)}>
+              Open →
+            </a>
+          </div>
+        )
+      }
+    </aside>
+  </div>
+
+  <script>
+    const units = [
+      "null",
+      "eins",
+      "zwei",
+      "drei",
+      "vier",
+      "fünf",
+      "sechs",
+      "sieben",
+      "acht",
+      "neun",
+    ];
+    const teens = [
+      "zehn",
+      "elf",
+      "zwölf",
+      "dreizehn",
+      "vierzehn",
+      "fünfzehn",
+      "sechzehn",
+      "siebzehn",
+      "achtzehn",
+      "neunzehn",
+    ];
+    const tens = [
+      "",
+      "",
+      "zwanzig",
+      "dreißig",
+      "vierzig",
+      "fünfzig",
+      "sechzig",
+      "siebzig",
+      "achtzig",
+      "neunzig",
+    ];
+    const months = [
+      "Januar",
+      "Februar",
+      "März",
+      "April",
+      "Mai",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "Dezember",
+    ];
+    const weekdays = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+    const dateOrdinals = [
+      ["erste", "ersten"],
+      ["zweite", "zweiten"],
+      ["dritte", "dritten"],
+      ["vierte", "vierten"],
+      ["fünfte", "fünften"],
+      ["sechste", "sechsten"],
+      ["siebte", "siebten"],
+      ["achte", "achten"],
+      ["neunte", "neunten"],
+      ["zehnte", "zehnten"],
+      ["elfte", "elften"],
+      ["zwölfte", "zwölften"],
+      ["dreizehnte", "dreizehnten"],
+      ["vierzehnte", "vierzehnten"],
+      ["fünfzehnte", "fünfzehnten"],
+      ["sechzehnte", "sechzehnten"],
+      ["siebzehnte", "siebzehnten"],
+      ["achtzehnte", "achtzehnten"],
+      ["neunzehnte", "neunzehnten"],
+      ["zwanzigste", "zwanzigsten"],
+      ["einundzwanzigste", "einundzwanzigsten"],
+      ["zweiundzwanzigste", "zweiundzwanzigsten"],
+      ["dreiundzwanzigste", "dreiundzwanzigsten"],
+      ["vierundzwanzigste", "vierundzwanzigsten"],
+      ["fünfundzwanzigste", "fünfundzwanzigsten"],
+      ["sechsundzwanzigste", "sechsundzwanzigsten"],
+      ["siebenundzwanzigste", "siebenundzwanzigsten"],
+      ["achtundzwanzigste", "achtundzwanzigsten"],
+      ["neunundzwanzigste", "neunundzwanzigsten"],
+      ["dreißigste", "dreißigsten"],
+      ["einunddreißigste", "einunddreißigsten"],
+    ];
+
+    const convertUnderHundred = (value: number) => {
+      if (value < 10) return units[value];
+      if (value < 20) return teens[value - 10];
+
+      const one = value % 10;
+      const ten = Math.floor(value / 10);
+      if (one === 0) return tens[ten];
+
+      return `${one === 1 ? "ein" : units[one]}und${tens[ten]}`;
+    };
+
+    const convertUnderThousand = (value: number) => {
+      if (value < 100) return convertUnderHundred(value);
+
+      const hundred = Math.floor(value / 100);
+      const remainder = value % 100;
+      const prefix = `${hundred === 1 ? "ein" : units[hundred]}hundert`;
+
+      return remainder === 0 ? prefix : `${prefix}${convertUnderHundred(remainder)}`;
+    };
+
+    const convertNumberToGerman = (value: number) => {
+      if (!Number.isInteger(value) || value < 0 || value > 999999) {
+        return "Enter 0 to 999999";
+      }
+
+      if (value < 1000) return convertUnderThousand(value);
+
+      const thousands = Math.floor(value / 1000);
+      const remainder = value % 1000;
+      const prefix = `${thousands === 1 ? "ein" : convertUnderThousand(thousands)}tausend`;
+
+      return remainder === 0 ? prefix : `${prefix}${convertUnderThousand(remainder)}`;
+    };
+
+    const numberInput = document.querySelector("[data-number-input]");
+    const numberResult = document.querySelector("[data-number-result]");
+    const numberResultText = document.querySelector("[data-number-result-text]");
+
+    const syncNumberResult = () => {
+      if (!(numberInput instanceof HTMLInputElement) || !(numberResult instanceof HTMLElement)) return;
+
+      const value = numberInput.value === "" ? 42 : Number(numberInput.value);
+      const converted = convertNumberToGerman(value);
+      const output = numberResultText instanceof HTMLElement ? numberResultText : numberResult;
+      output.textContent = converted;
+
+      if (converted.startsWith("Enter")) {
+        numberResult.removeAttribute("data-speak-de");
+        numberResult.setAttribute("aria-disabled", "true");
+      } else {
+        numberResult.dataset.speakDe = converted;
+        numberResult.removeAttribute("aria-disabled");
+      }
+    };
+
+    numberInput?.addEventListener("input", syncNumberResult);
+    syncNumberResult();
+
+    const dateInput = document.querySelector("[data-date-input]");
+    const dateResult = document.querySelector("[data-date-result]");
+    const dateResultText = document.querySelector("[data-date-result-text]");
+
+    const toDateInputValue = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const convertDateToGerman = (value: string) => {
+      const [yearText, monthText, dayText] = value.split("-");
+      const year = Number(yearText);
+      const month = Number(monthText);
+      const day = Number(dayText);
+
+      if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) {
+        return "Bitte wählen Sie ein Datum.";
+      }
+
+      const date = new Date(year, month - 1, day);
+      const ordinal = dateOrdinals[day - 1]?.[0];
+      const monthName = months[month - 1];
+      const weekday = weekdays[date.getDay()];
+
+      if (!ordinal || !monthName || date.getMonth() !== month - 1) {
+        return "Bitte wählen Sie ein gültiges Datum.";
+      }
+
+      return `${weekday}, der ${ordinal} ${monthName} ${convertNumberToGerman(year)}`;
+    };
+
+    const syncDateResult = () => {
+      if (!(dateInput instanceof HTMLInputElement) || !(dateResult instanceof HTMLElement)) return;
+
+      if (!dateInput.value) {
+        dateInput.value = toDateInputValue(new Date());
+      }
+
+      const converted = convertDateToGerman(dateInput.value);
+      const output = dateResultText instanceof HTMLElement ? dateResultText : dateResult;
+      output.textContent = converted;
+
+      if (converted.startsWith("Bitte")) {
+        dateResult.removeAttribute("data-speak-de");
+        dateResult.setAttribute("aria-disabled", "true");
+      } else {
+        dateResult.dataset.speakDe = converted;
+        dateResult.removeAttribute("aria-disabled");
+      }
+    };
+
+    dateInput?.addEventListener("input", syncDateResult);
+    syncDateResult();
+  </script>
+</BaseLayout>

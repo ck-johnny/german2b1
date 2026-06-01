@@ -1760,6 +1760,10 @@ em {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
+  line-height: 1.15;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .number-result::before {
@@ -1773,6 +1777,11 @@ em {
   margin-right: 12px;
 }
 
+.number-result-value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .number-result.is-playing {
   background: var(--accent);
   color: var(--paper);
@@ -1780,6 +1789,10 @@ em {
 
 .number-result.is-playing::before {
   border-left-color: var(--paper);
+}
+
+.date-converter .number-result {
+  font-size: clamp(1.25rem, 4vw, 2rem);
 }
 
 .basics-section > h2 {
@@ -1852,6 +1865,143 @@ em {
   font-size: 10.5px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.date-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+}
+
+.date-card {
+  background: var(--paper);
+  border: var(--card-border);
+  border-radius: var(--radius);
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  padding: 12px;
+  min-width: 0;
+}
+
+.date-number,
+.time-clock {
+  font-family: var(--font-u);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.date-number {
+  align-self: start;
+  background: var(--accent-soft);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+}
+
+.date-card small {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.weekday-card[data-weekday-type="weekend"] {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--rule));
+  background: var(--accent-soft);
+}
+
+.time-table {
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+}
+
+.time-table-head,
+.time-row {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1.1fr) minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.time-table-head {
+  color: var(--muted);
+  font-family: var(--font-u);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 10px 0;
+  text-transform: uppercase;
+}
+
+.time-row {
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+}
+
+.time-row small {
+  color: var(--muted);
+  grid-column: 2 / -1;
+  margin-top: -4px;
+}
+
+/* ── Grammar ────────────────────────────────────────────────────────── */
+
+.grammar-overview > h2 {
+  margin-bottom: 14px;
+}
+
+.grammar-path {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.grammar-step {
+  background: var(--paper);
+  border: var(--card-border);
+  border-radius: var(--radius);
+  color: inherit;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  text-decoration: none;
+}
+
+.grammar-step:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.grammar-step .module-n {
+  color: var(--muted);
+  font-family: var(--font-h);
+  font-size: 1.45rem;
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+}
+
+.grammar-step h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.grammar-step p {
+  color: var(--ink-2);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.grammar-goal {
+  margin-top: 12px;
 }
 
 /* ── Reader ─────────────────────────────────────────────────────────── */
@@ -2493,6 +2643,24 @@ em {
 
   .basic-grid.is-wide {
     grid-template-columns: 1fr;
+  }
+
+  .date-grid,
+  .grammar-path {
+    grid-template-columns: 1fr;
+  }
+
+  .time-table-head {
+    display: none;
+  }
+
+  .time-row {
+    grid-template-columns: 58px 1fr;
+  }
+
+  .time-row > span:nth-child(4),
+  .time-row small {
+    grid-column: 2;
   }
 
   .hero .display,

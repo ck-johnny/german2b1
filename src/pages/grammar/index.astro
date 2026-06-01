@@ -1,0 +1,60 @@
+---
+import { getGrammarModulesByLevel, grammarLevels, grammarModules } from "@data/grammar";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { withBasePath } from "@utils/paths";
+---
+
+<BaseLayout title="Grammar · German2B1" description="A modular German grammar path from A1 foundations to B1 expansion.">
+  <header class="compact-page-title">
+    <span class="meta">Grammar path</span>
+    <h1>Grammar</h1>
+    <p>Study grammar as small modules with patterns, common traps, practice, and related course modules.</p>
+  </header>
+
+  <section class="section grammar-overview">
+    <h2>Learning Order</h2>
+    <div class="grammar-path">
+      {
+        grammarModules.map((module) => (
+          <a class="grammar-step" href={withBasePath(`/grammar/${module.id}`)}>
+            <span class="module-n">{String(module.order).padStart(2, "0")}</span>
+            <div>
+              <span class="meta">{module.level} · {module.stage}</span>
+              <h3>{module.title}</h3>
+              <p>{module.learningGoal}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    grammarLevels.map((level) => {
+      const list = getGrammarModulesByLevel(level);
+      return (
+        <section class="level-band">
+          <h2>{level} · {list.length} grammar modules</h2>
+          <div class="module-list">
+            {list.map((module) => (
+              <a class="module-row" href={withBasePath(`/grammar/${module.id}`)}>
+                <span class="module-n">{String(module.order).padStart(2, "0")}</span>
+                <div class="module-mid">
+                  <div class="module-title-row">
+                    <h3>{module.title}</h3>
+                    <span class="module-theme">{module.stage}</span>
+                  </div>
+                  <p>{module.summary}</p>
+                </div>
+                <div class="module-right">
+                  <span class="module-min">{module.patterns.length} patterns</span>
+                  <span class="arrow">→</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      );
+    })
+  }
+</BaseLayout>

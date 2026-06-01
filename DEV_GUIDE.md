@@ -25,6 +25,8 @@ German2B1 should feel like a compact self-study app, not a marketing site. Learn
 - German tap-to-play rendering is handled by `src/components/GermanText.astro` and the speech script in `src/layouts/BaseLayout.astro`. It uses native browser speech when available and a remote TTS audio fallback when native speech is unavailable.
 - Pronunciation speed is controlled globally in `src/layouts/BaseLayout.astro` with a bottom preset bar and numeric speed buttons. Save to `localStorage` first, with a cookie fallback for embedded browsers that block local storage.
 - Module pages combine the base module data, extra study material, tasks, micro-checks, and official resources.
+- Basics content is split into compact modules through `src/data/basics.ts` and `src/pages/basics/[id].astro`.
+- Grammar content is exposed as a learning path through `src/data/grammar.ts` and `src/pages/grammar/[id].astro`, reusing grammar topic material where possible.
 - The old `learn-lang` repo was a listening/PWA experiment. Compatible ideas already ported here are: global speed controls, tappable cheat-sheet basics, and the compact Reader tool for pasted German lines.
 - Module metadata such as goals, target items, study status, and completion criteria should stay collapsible so the study material remains the main surface.
 - Phrase Bank, Examples, and Sentence Builder are merged into one expandable phrase-and-sentence bank with word-level German audio and English glosses.
@@ -41,6 +43,7 @@ German2B1 should feel like a compact self-study app, not a marketing site. Learn
 - 2026-05-17: Marketing copy and repeated page descriptions waste space. Default to direct study surfaces, especially for the zero-to-B1 path.
 - 2026-05-17: A1 and A2 learners need built-in basics too, not only B1 exam material. Keep alphabet, numbers, pronouns, early phrases, and level-by-level modules easy to reach.
 - 2026-05-17: Chinese was removed from the learner-facing app. Do not render Chinese labels, translations, or bilingual headings by default.
+- 2026-06-01: When changing app-shell pages or cached navigation routes, bump `CACHE_NAME` in `public/sw.js` before browser QA so old service-worker content cannot mask current markup.
 
 ## Maintenance
 
