@@ -288,6 +288,7 @@ em {
   padding: 18px;
   position: fixed;
   top: 0;
+  touch-action: pan-y;
   transform: translateX(-100%);
   transition: transform 200ms ease;
   width: 300px;

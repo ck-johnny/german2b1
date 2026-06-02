@@ -1,8 +1,15 @@
-const CACHE_NAME = "german2b1-shell-v3";
+const CACHE_NAME = "german2b1-shell-v5";
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL = [
   "./",
   "./basics/",
+  "./basics/alphabet/",
+  "./basics/numbers/",
+  "./basics/dates/",
+  "./basics/time/",
+  "./basics/seasons/",
+  "./basics/pronouns/",
+  "./basics/first-phrases/",
   "./reader/",
   "./review/",
   "./resources/",

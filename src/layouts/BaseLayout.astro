@@ -1,5 +1,6 @@
 ---
 import "@styles/global.css";
+import { basicModules } from "@data/basics";
 import { modules } from "@data/modules";
 import { withBasePath, withoutBasePath } from "@utils/paths";
 
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/resources", label: "Resources" },
 ];
 const isModulesPath = currentPath.startsWith("/modules");
+const isBasicsPath = currentPath.startsWith("/basics");
 const isActive = (href: string) =>
   currentPath === href || (href !== "/" && currentPath.startsWith(href));
 ---
@@ -105,9 +107,25 @@ const isActive = (href: string) =>
                 }
               </div>
             </details>
+            <details class="module-nav" open={isBasicsPath}>
+              <summary aria-current={isBasicsPath ? "page" : undefined}>Basics</summary>
+              <div class="module-nav-list">
+                {
+                  basicModules.map((module) => (
+                    <a
+                      href={withBasePath(`/basics/${module.id}`)}
+                      aria-current={currentPath === `/basics/${module.id}` ? "page" : undefined}
+                    >
+                      <span>{String(module.order).padStart(2, "0")}</span>
+                      {module.title}
+                    </a>
+                  ))
+                }
+              </div>
+            </details>
             {
               navItems
-                .filter((item) => item.href !== "/modules")
+                .filter((item) => item.href !== "/modules" && item.href !== "/basics")
                 .map((item) => (
                   <a
                     href={withBasePath(item.href)}
@@ -282,7 +300,10 @@ const isActive = (href: string) =>
         };
 
         const menuButton = document.querySelector(".menu-button");
+        const sideMenu = document.querySelector(".side-menu");
         const closeMenuButtons = document.querySelectorAll(".menu-overlay, .side-menu-close, .side-menu a");
+        let menuSwipeState;
+
         const setMenuOpen = (isOpen) => {
           document.documentElement.classList.toggle("menu-open", isOpen);
           menuButton?.setAttribute("aria-expanded", String(isOpen));
@@ -294,6 +315,42 @@ const isActive = (href: string) =>
         closeMenuButtons.forEach((button) => {
           button.addEventListener("click", () => setMenuOpen(false));
         });
+
+        const startMenuSwipe = (event) => {
+          if (!document.documentElement.classList.contains("menu-open")) return;
+          if (event.pointerType === "mouse" && event.button !== 0) return;
+
+          menuSwipeState = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+          };
+          sideMenu?.setPointerCapture?.(event.pointerId);
+        };
+
+        const updateMenuSwipe = (event) => {
+          if (!menuSwipeState || event.pointerId !== menuSwipeState.pointerId) return;
+
+          const deltaX = event.clientX - menuSwipeState.startX;
+          const deltaY = event.clientY - menuSwipeState.startY;
+          const isClosingSwipe = deltaX < -72 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4;
+
+          if (!isClosingSwipe) return;
+
+          event.preventDefault();
+          setMenuOpen(false);
+          menuSwipeState = undefined;
+        };
+
+        const endMenuSwipe = (event) => {
+          if (!menuSwipeState || event.pointerId !== menuSwipeState.pointerId) return;
+          menuSwipeState = undefined;
+        };
+
+        sideMenu?.addEventListener("pointerdown", startMenuSwipe);
+        sideMenu?.addEventListener("pointermove", updateMenuSwipe);
+        sideMenu?.addEventListener("pointerup", endMenuSwipe);
+        sideMenu?.addEventListener("pointercancel", endMenuSwipe);
 
         window.speechSynthesis?.addEventListener?.("voiceschanged", getGermanVoice);
         getGermanVoice();
