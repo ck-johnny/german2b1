@@ -28,9 +28,9 @@ npm run preview
 ## Project Structure
 
 ```text
-deep-research-report.md       Research blueprint and source thesis
+deep-research-report.md       Clean research blueprint and source thesis
 DEV_GUIDE.md                  Product rules, patterns, and lessons learned
-docs/                         Product, technical, and implementation planning
+docs/                         Product, technical, A1 blueprint, and implementation planning
 public/                       PWA manifest, service worker, icons
 src/data/                     Module, topic, basics, resource, and study-extras data
 src/pages/                    Static app routes

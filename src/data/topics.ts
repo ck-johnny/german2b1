@@ -331,8 +331,8 @@ export const topics: StudyTopic[] = [
     id: "modal-verbs",
     category: "Grammar",
     title: "Modal Verbs",
-    summary: "Use können, müssen, möchten, and wollen to express ability, obligation, wishes, and plans.",
-    level: "A2",
+    summary: "Use können, müssen, möchten, and wollen for A1-safe ability, obligation, wishes, and service requests.",
+    level: "A1",
     focus: ["modal verb conjugation", "second verb at the end", "polite requests"],
     patterns: [
       { label: "can", de: "Ich kann Deutsch lernen.", en: "I can learn German." },
@@ -349,10 +349,10 @@ export const topics: StudyTopic[] = [
   {
     id: "perfekt-past",
     category: "Grammar",
-    title: "Perfekt Past",
-    summary: "Tell simple past events with haben or sein plus a past participle.",
-    level: "A2",
-    focus: ["haben/sein choice", "past participles", "narrative time phrases"],
+    title: "Selected Perfekt and Past-Time Chunks",
+    summary: "Recognise selected Perfekt forms and use narrow past-time chunks such as war, hatte, and high-value appointment/health lines.",
+    level: "A1",
+    focus: ["selected Perfekt", "war and hatte", "past-time chunks"],
     patterns: [
       { label: "haben", de: "Gestern habe ich Deutsch gelernt.", en: "Yesterday I learned German." },
       { label: "sein", de: "Ich bin zum Arzt gegangen.", en: "I went to the doctor." },
@@ -363,7 +363,7 @@ export const topics: StudyTopic[] = [
       "Write five sentences about yesterday.",
       "Retell the same event with gestern, danach, and am Abend.",
     ],
-    moduleIds: ["a2-2"],
+    moduleIds: ["a1-6", "a2-2"],
   },
   {
     id: "subordinate-clauses",

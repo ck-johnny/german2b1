@@ -2,7 +2,7 @@
 
 ## Summary
 
-German2B1 is implemented as an Astro + TypeScript static web app. The MVP prioritises the durable content architecture described in `deep-research-report.md`: module pages, bilingual support, micro-checks, SRS-ready vocabulary, and official-resource links. It does not require a backend, database, accounts, payments, or runtime AI.
+German2B1 is implemented as an Astro + TypeScript static web app. The MVP prioritises the durable content architecture described in `deep-research-report.md`: module pages, English-first learner support, micro-checks, SRS-ready vocabulary, and official-resource links. It does not require a backend, database, accounts, payments, or runtime AI.
 
 ## Architecture
 
@@ -19,9 +19,9 @@ The app models each learning milestone as a module with:
 
 - level: `A1`, `A2`, or `B1`
 - ordered module id such as `a1-1`
-- English and Traditional Chinese titles/goals
+- English titles and goals
 - German target items
-- trilingual vocabulary
+- German vocabulary with English support
 - micro-grammar explanations
 - examples
 - practice tasks
@@ -33,7 +33,7 @@ This keeps the app editable by AI and easy to validate in code.
 
 ## Current Static MVP
 
-The MVP intentionally uses local static data instead of a CMS or database. This is faster to ship and matches the first content-building phase. The typed data files can later become import/export boundaries for:
+The MVP intentionally uses local static data instead of a CMS or database. This is faster to ship and matches the first content-building phase. Some legacy data fields still contain Traditional Chinese placeholders, but the learner-facing UI renders English by default. The typed data files can later become import/export boundaries for:
 
 - a headless CMS
 - user progress tables
@@ -62,4 +62,3 @@ The current module ids should remain stable and become foreign keys for progress
 - Do not require accounts for public reading.
 - Store productive writing/speaking work only after explicit learner action.
 - Keep official exam links curated rather than scraped.
-

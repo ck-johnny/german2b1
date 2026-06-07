@@ -92,7 +92,7 @@ const baseModules: LearningModule[] = [
       en: "German A1 greetings formal informal Sie du pronunciation umlauts",
       zh: "德語 A1 問候 Sie du 發音 母音變音",
     },
-    resourceIds: ["goethe-b1", "vhs-lernportal"],
+    resourceIds: ["goethe-a1", "goethe-a1-practice", "vhs-lernportal"],
   },
   {
     id: "a1-2",
@@ -132,7 +132,7 @@ const baseModules: LearningModule[] = [
       en: "German A1 personal information questions forms address phone number",
       zh: "德語 A1 個人資料 問句 表格 地址 電話",
     },
-    resourceIds: ["vhs-lernportal"],
+    resourceIds: ["goethe-a1-practice", "vhs-lernportal"],
   },
   {
     id: "a1-3",
@@ -172,7 +172,7 @@ const baseModules: LearningModule[] = [
       en: "German A1 time routine present tense word order",
       zh: "德語 A1 時間 作息 現在式 語序",
     },
-    resourceIds: ["vhs-lernportal"],
+    resourceIds: ["goethe-a1-practice", "vhs-lernportal"],
   },
   {
     id: "a1-4",
@@ -212,7 +212,7 @@ const baseModules: LearningModule[] = [
       en: "German A1 ordering food prices accusative einen Kaffee",
       zh: "德語 A1 點餐 價格 受格 einen Kaffee",
     },
-    resourceIds: ["vhs-lernportal"],
+    resourceIds: ["goethe-a1-practice", "vhs-lernportal"],
   },
   {
     id: "a1-5",
@@ -252,7 +252,7 @@ const baseModules: LearningModule[] = [
       en: "German A1 city directions es gibt modal verb können",
       zh: "德語 A1 城市 方向 es gibt 情態動詞 können",
     },
-    resourceIds: ["vhs-lernportal"],
+    resourceIds: ["goethe-a1-practice", "telc-a1", "vhs-lernportal"],
   },
   {
     id: "a1-6",
@@ -292,7 +292,7 @@ const baseModules: LearningModule[] = [
       en: "German A1 appointment health travel short message absagen",
       zh: "德語 A1 預約 健康 出行 簡訊 absagen",
     },
-    resourceIds: ["goethe-b1", "vhs-lernportal"],
+    resourceIds: ["goethe-a1", "goethe-a1-practice", "telc-a1", "vhs-lernportal"],
   },
   {
     id: "a2-1",

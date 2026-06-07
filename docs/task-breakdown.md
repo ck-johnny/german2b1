@@ -25,9 +25,15 @@
 
 ## Phase 4: Content Deepening
 
+- [x] Clean research reports into source-linked implementation docs.
+- [x] Add A1 app blueprint from the second report.
+- [x] Add official A1 resource records and connect A1 modules to A1 sources.
+- [x] Make modal verbs and selected past-time chunks A1-visible in the grammar path.
 - [ ] Expand every module from starter content into full lesson content.
 - [ ] Add downloadable Anki-style export format.
 - [ ] Add more micro-check items per module.
+- [ ] Add A1 listening, reading, writing, and speaking mini-mock task data.
+- [ ] Expand A1 services, clothing, accommodation, and fuller family/person topic coverage.
 - [ ] Add B1 writing and speaking rubrics.
 - [ ] Add citizenship companion practice page.
 

@@ -52,13 +52,13 @@ const grammarDetails: Record<string, Pick<GrammarModule, "order" | "stage" | "le
   },
   "modal-verbs": {
     order: 9,
-    stage: "Past and Clauses",
-    learningGoal: "Use modal verbs with an infinitive at the end to express ability, necessity, and wishes.",
+    stage: "Sentence Building",
+    learningGoal: "Use modal verbs with an infinitive at the end for A1-safe requests, ability, necessity, and wishes.",
   },
   "perfekt-past": {
     order: 10,
     stage: "Past and Clauses",
-    learningGoal: "Talk about completed past events with haben/sein plus a past participle.",
+    learningGoal: "Recognise selected Perfekt forms and use narrow past-time chunks before full A2 narration.",
   },
   "subordinate-clauses": {
     order: 11,
