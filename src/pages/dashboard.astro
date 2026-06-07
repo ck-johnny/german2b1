@@ -1,16 +1,26 @@
 ---
+import GermanText from "@components/GermanText.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
+import {
+  a1ExamTasks,
+  a1GrammarPoints,
+  a1LearningMechanics,
+  a1TopicBuckets,
+  a1VocabularyTargets,
+} from "@data/a1Readiness";
 import { levels, modules } from "@data/modules";
+
+const a1ActiveTargetTotal = a1VocabularyTargets.reduce((sum, target) => sum + target.activeItems, 0);
 ---
 
 <BaseLayout title="Dashboard · German2B1" description="Progress model for German2B1.">
   <section class="dashboard-hero">
     <div>
-      <span class="meta">Progress model</span>
-      <h1>Built for irregular study.</h1>
+      <span class="meta">A1 readiness model</span>
+      <h1>Study the things A1 actually asks you to do.</h1>
       <p class="lead">
-        The current dashboard is static documentation for the learner-state model. Later, these blocks become real
-        progress cards backed by local storage or a database.
+        The A1 layer is organised around survival communication: sound and spelling, controlled vocabulary,
+        reusable sentence patterns, core grammar, and exam-shaped tasks.
       </p>
     </div>
     <aside class="panel">
@@ -23,54 +33,98 @@ import { levels, modules } from "@data/modules";
             </div>
           ))
         }
+        <div class="stat">
+          <span>A1 active target</span>
+          <strong>{a1ActiveTargetTotal}</strong>
+        </div>
       </div>
     </aside>
   </section>
 
   <section class="section">
-    <h2>State modes</h2>
-    <div class="grid">
-      <article class="card">
-        <span class="meta">normal</span>
-        <h3>Study at ordinary pace.</h3>
-        <p>Use the next module and ordinary review prompts.</p>
-      </article>
-      <article class="card">
-        <span class="meta">sprint</span>
-        <h3>Short burst before a deadline.</h3>
-        <p>Prioritise micro-checks, weak modules, and productive exam tasks.</p>
-      </article>
-      <article class="card">
-        <span class="meta">paused</span>
-        <h3>No guilt during zero-weeks.</h3>
-        <p>Keep the last module visible and wait for a reboot session.</p>
-      </article>
-      <article class="card">
-        <span class="meta">reboot</span>
-        <h3>Restart without restarting the course.</h3>
-        <p>Review weakest cards and choose the next achievable module.</p>
-      </article>
+    <h2>A1 topic coverage</h2>
+    <div class="a1-scope-grid">
+      {
+        a1TopicBuckets.map((topic) => (
+          <article class="scope-card">
+            <h3>{topic.title}</h3>
+            <p>{topic.why}</p>
+            <div class="pill-row">
+              {topic.examples.map((example) => (
+                <span class="pill">
+                  <GermanText text={example} display={example} />
+                </span>
+              ))}
+            </div>
+            <small>{topic.moduleIds.map((id) => id.toUpperCase()).join(" · ")}</small>
+          </article>
+        ))
+      }
     </div>
   </section>
 
   <section class="section">
-    <h2>Future completion logic</h2>
-    <div class="grid">
-      <article class="card">
-        <span class="meta">01</span>
-        <h3>Objective quiz</h3>
-        <p>Can the learner answer the module micro-checks?</p>
-      </article>
-      <article class="card">
-        <span class="meta">02</span>
-        <h3>Production task</h3>
-        <p>Can the learner write or say something useful from the module?</p>
-      </article>
-      <article class="card">
-        <span class="meta">03</span>
-        <h3>Retention check</h3>
-        <p>Can the learner recall the key cards after a delay?</p>
-      </article>
+    <h2>Grammar production line</h2>
+    <div class="grammar-status-list">
+      {
+        a1GrammarPoints.map((point) => (
+          <article class="grammar-status-row">
+            <span class="pill blue">{point.status}</span>
+            <div>
+              <h3>{point.title}</h3>
+              <p>{point.focus}</p>
+            </div>
+            <GermanText text={point.example} strong />
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Exam-shaped queues</h2>
+    <div class="exam-task-grid">
+      {
+        a1ExamTasks.map((task) => (
+          <article class="exam-task-card">
+            <span class="meta">{task.skill}</span>
+            <h3>{task.title}</h3>
+            <p>{task.taskShape}</p>
+            <GermanText text={task.promptDe} strong block />
+            <small>{task.successSignal}</small>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Vocabulary targets and review mechanics</h2>
+    <div class="readiness-two-col">
+      <div class="target-list">
+        {
+          a1VocabularyTargets.map((target) => (
+            <article class="target-row">
+              <strong>{target.activeItems}</strong>
+              <div>
+                <h3>{target.family}</h3>
+                <p>{target.note}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+      <div class="mechanic-list">
+        {
+          a1LearningMechanics.map((mechanic) => (
+            <article class="mechanic-card">
+              <h3>{mechanic.title}</h3>
+              <p>{mechanic.value}</p>
+              <small>{mechanic.cadence}</small>
+            </article>
+          ))
+        }
+      </div>
     </div>
   </section>
 </BaseLayout>

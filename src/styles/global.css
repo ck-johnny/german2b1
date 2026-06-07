@@ -543,6 +543,16 @@ em {
   color: var(--accent);
 }
 
+.pill .speak-de::before {
+  content: none;
+}
+
+.pill .speak-de {
+  color: inherit;
+  gap: 0;
+  padding: 0;
+}
+
 .pill-row {
   display: flex;
   flex-wrap: wrap;
@@ -598,6 +608,14 @@ em {
   gap: 18px;
 }
 
+.section-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
 .section > h2 {
   border-bottom: 0;
   padding-bottom: 0;
@@ -611,6 +629,26 @@ em {
 }
 
 .section > h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: var(--accent);
+  margin-top: 12px;
+}
+
+.section-head-row > h2 {
+  color: var(--ink-2);
+  display: inline-flex;
+  flex-direction: column;
+  font-family: var(--font-h);
+  font-size: var(--h2);
+  font-style: italic;
+  font-weight: 400;
+  margin: 0;
+}
+
+.section-head-row > h2::after {
   content: "";
   display: block;
   width: 60px;
@@ -937,6 +975,92 @@ em {
   font-weight: 600;
 }
 
+.readiness-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.readiness-stat,
+.scope-card,
+.exam-strip-item,
+.a1-chip-card,
+.a1-mini-card,
+.exam-task-card,
+.mechanic-card,
+.target-row,
+.grammar-status-row {
+  background: var(--paper);
+  border: var(--card-border);
+  border-radius: var(--radius);
+}
+
+.readiness-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--card-pad);
+}
+
+.readiness-stat strong {
+  color: var(--ink);
+  font-family: var(--font-h);
+  font-size: 2.6rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.readiness-stat p,
+.scope-card p,
+.exam-strip-item p,
+.a1-chip-card p,
+.a1-mini-card p,
+.exam-task-card p,
+.mechanic-card p,
+.target-row p,
+.grammar-status-row p {
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.a1-scope-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.scope-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px var(--card-pad);
+}
+
+.scope-card small,
+.exam-task-card small,
+.mechanic-card small,
+.a1-mini-card small {
+  color: var(--muted);
+  font-family: var(--font-u);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.exam-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.exam-strip-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px var(--card-pad);
+}
+
 /* Plain horizontal chip strip (used on topics page) */
 .topic-strip {
   display: flex;
@@ -1166,6 +1290,53 @@ em {
   text-decoration: underline;
 }
 
+.a1-readiness-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+}
+
+.a1-readiness-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.a1-chip-list,
+.a1-mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.a1-chip-card,
+.a1-mini-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px var(--card-pad);
+}
+
+.a1-chip-card h3,
+.a1-mini-card h3,
+.exam-strip-item h3,
+.exam-task-card h3,
+.mechanic-card h3,
+.target-row h3,
+.grammar-status-row h3 {
+  font-size: 1.04rem;
+  font-weight: 500;
+}
+
+.a1-mini-card > div,
+.a1-task-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 960px) {
   .module-grid {
     grid-template-columns: 1fr;
@@ -1173,6 +1344,10 @@ em {
 
   .mod-side {
     position: static;
+  }
+
+  .a1-readiness-panel {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2542,6 +2717,64 @@ em {
   line-height: 1;
 }
 
+.grammar-status-list,
+.target-list,
+.mechanic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.grammar-status-row {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr) minmax(180px, auto);
+  padding: 14px var(--card-pad);
+}
+
+.exam-task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.exam-task-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px var(--card-pad);
+}
+
+.readiness-two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gap);
+}
+
+.target-row {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 64px minmax(0, 1fr);
+  padding: 14px var(--card-pad);
+}
+
+.target-row strong {
+  color: var(--accent);
+  font-family: var(--font-h);
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.mechanic-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px var(--card-pad);
+}
+
 /* Topic detail */
 .topic-reader {
   display: flex;
@@ -2604,6 +2837,17 @@ em {
   .level-path,
   .module-metadata {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .readiness-overview,
+  .exam-strip,
+  .readiness-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .grammar-status-row {
+    align-items: start;
+    grid-template-columns: 1fr;
   }
 
   .continue-row {

@@ -776,7 +776,7 @@ const baseModules: LearningModule[] = [
   },
 ];
 
-type ModuleExpansion = Partial<Pick<LearningModule, "vocabulary" | "grammar" | "examples">>;
+type ModuleExpansion = Partial<Pick<LearningModule, "vocabulary" | "grammar" | "examples" | "tasks" | "microChecks">>;
 
 const moduleExpansions: Record<string, ModuleExpansion> = {
   "a1-1": {
@@ -796,6 +796,22 @@ const moduleExpansions: Record<string, ModuleExpansion> = {
       { de: "Können Sie das bitte buchstabieren?", en: "Can you spell that, please?", zh: "" },
       { de: "Ich komme aus Taiwan und wohne in Berlin.", en: "I come from Taiwan and live in Berlin.", zh: "" },
     ],
+    tasks: [
+      {
+        title: "Alphabet dictation",
+        minutes: 8,
+        description: "Spell your name, email address, and one street name aloud, then write the letters you hear.",
+      },
+      {
+        title: "Slow-audio shadowing",
+        minutes: 6,
+        description: "Play three greeting sentences at 0.5x, repeat them, then repeat once at 0.75x.",
+      },
+    ],
+    microChecks: [
+      { prompt: "Ask politely: Can you spell that, please?", answer: "Können Sie das bitte buchstabieren?" },
+      { prompt: "What German repair phrase means Slowly, please?", answer: "Langsam bitte." },
+    ],
   },
   "a1-2": {
     vocabulary: [
@@ -813,6 +829,22 @@ const moduleExpansions: Record<string, ModuleExpansion> = {
       { de: "Die Postleitzahl ist eins null eins eins fünf.", en: "The postal code is 10115.", zh: "" },
       { de: "Ich bin ledig.", en: "I am single.", zh: "" },
       { de: "Haben Sie eine E-Mail-Adresse?", en: "Do you have an email address?", zh: "" },
+    ],
+    tasks: [
+      {
+        title: "Official-form scan",
+        minutes: 10,
+        description: "Read a short form label set and fill name, address, phone number, date of birth, and language.",
+      },
+      {
+        title: "Phone-number dictation",
+        minutes: 8,
+        description: "Listen to three spoken phone numbers and write digits before checking the German words.",
+      },
+    ],
+    microChecks: [
+      { prompt: "Translate: date of birth", answer: "das Geburtsdatum" },
+      { prompt: "Read 10115 as separate digits.", answer: "eins null eins eins fünf" },
     ],
   },
   "a1-3": {
@@ -832,6 +864,22 @@ const moduleExpansions: Record<string, ModuleExpansion> = {
       { de: "Jeden Tag lerne ich zehn Minuten Deutsch.", en: "Every day I study German for ten minutes.", zh: "" },
       { de: "Nach Feierabend habe ich Zeit.", en: "After work I have time.", zh: "" },
     ],
+    tasks: [
+      {
+        title: "Time and date dictation",
+        minutes: 10,
+        description: "Write the day and time from five spoken appointment sentences before revealing the text.",
+      },
+      {
+        title: "Calendar conversion",
+        minutes: 8,
+        description: "Turn five numeric dates into spoken German date phrases with am plus the ordinal form.",
+      },
+    ],
+    microChecks: [
+      { prompt: "What time is halb elf?", answer: "10:30" },
+      { prompt: "Translate: on the first of June", answer: "am ersten Juni" },
+    ],
   },
   "a1-4": {
     vocabulary: [
@@ -849,6 +897,22 @@ const moduleExpansions: Record<string, ModuleExpansion> = {
       { de: "Ich nehme ein Wasser und einen Kaffee.", en: "I will take a water and a coffee.", zh: "" },
       { de: "Kann ich mit Karte bezahlen?", en: "Can I pay by card?", zh: "" },
       { de: "Nein danke, das ist alles.", en: "No thanks, that is everything.", zh: "" },
+    ],
+    tasks: [
+      {
+        title: "Price and payment roleplay",
+        minutes: 10,
+        description: "Build a short shop dialogue with greeting, item, price question, payment, and closing.",
+      },
+      {
+        title: "Article basket",
+        minutes: 8,
+        description: "Sort ten food nouns by article, then order each one with ich möchte or ich nehme.",
+      },
+    ],
+    microChecks: [
+      { prompt: "Choose: Ich nehme ein Wasser / einen Wasser.", answer: "Ich nehme ein Wasser." },
+      { prompt: "Translate: Can I pay by card?", answer: "Kann ich mit Karte bezahlen?" },
     ],
   },
   "a1-5": {
@@ -868,6 +932,22 @@ const moduleExpansions: Record<string, ModuleExpansion> = {
       { de: "Gehen Sie geradeaus und dann links.", en: "Go straight ahead and then left.", zh: "" },
       { de: "Ich wohne in einer kleinen Wohnung.", en: "I live in a small apartment.", zh: "" },
     ],
+    tasks: [
+      {
+        title: "Signs and places scan",
+        minutes: 10,
+        description: "Read short station and city signs, then decide whether they tell you place, direction, or action.",
+      },
+      {
+        title: "Route prompt",
+        minutes: 8,
+        description: "Describe a route with three steps using geradeaus, links, rechts, and one nearby place.",
+      },
+    ],
+    microChecks: [
+      { prompt: "Translate: Is there a pharmacy nearby?", answer: "Gibt es eine Apotheke in der Nähe?" },
+      { prompt: "What does Ausgang mean on a sign?", answer: "exit" },
+    ],
   },
   "a1-6": {
     vocabulary: [
@@ -875,16 +955,38 @@ const moduleExpansions: Record<string, ModuleExpansion> = {
       { de: "die Verspätung", en: "delay", zh: "" },
       { de: "verschieben", en: "to postpone / move", zh: "" },
       { de: "die Nachricht", en: "message", zh: "" },
+      { de: "die Kopfschmerzen", en: "headache", zh: "" },
+      { de: "war", en: "was", zh: "" },
+      { de: "hatte", en: "had", zh: "" },
     ],
     grammar: [
       { en: "Use nicht before the final infinitive: Ich kann heute nicht kommen.", zh: "" },
       { en: "Und connects two complete ideas without changing the word order.", zh: "" },
+      { en: "For A1 past references, learn war and hatte as ready-to-use chunks before expanding the full past tense.", zh: "" },
     ],
     examples: [
       { de: "Ich habe morgen einen Termin beim Arzt.", en: "I have an appointment with the doctor tomorrow.", zh: "" },
       { de: "Der Bus hat zehn Minuten Verspätung.", en: "The bus is ten minutes late.", zh: "" },
       { de: "Können wir den Termin auf Freitag verschieben?", en: "Can we move the appointment to Friday?", zh: "" },
       { de: "Ich schreibe Ihnen eine kurze Nachricht.", en: "I am writing you a short message.", zh: "" },
+      { de: "Gestern war ich krank.", en: "Yesterday I was sick.", zh: "" },
+      { de: "Ich hatte einen Termin.", en: "I had an appointment.", zh: "" },
+    ],
+    tasks: [
+      {
+        title: "Short-message repair",
+        minutes: 12,
+        description: "Write a two- to four-sentence message that gives a reason, cancels or moves an appointment, and closes politely.",
+      },
+      {
+        title: "Appointment voicemail",
+        minutes: 8,
+        description: "Record your name, problem, appointment time, and request in one slow formal message.",
+      },
+    ],
+    microChecks: [
+      { prompt: "Translate: Yesterday I was sick.", answer: "Gestern war ich krank." },
+      { prompt: "Translate: I have a headache.", answer: "Ich habe Kopfschmerzen." },
     ],
   },
   "a2-1": {
@@ -1115,6 +1217,8 @@ export const modules: LearningModule[] = baseModules.map((module) => {
     vocabulary: [...module.vocabulary, ...(expansion.vocabulary ?? [])],
     grammar: [...module.grammar, ...(expansion.grammar ?? [])],
     examples: [...module.examples, ...(expansion.examples ?? [])],
+    tasks: [...module.tasks, ...(expansion.tasks ?? [])],
+    microChecks: [...module.microChecks, ...(expansion.microChecks ?? [])],
   };
 });
 

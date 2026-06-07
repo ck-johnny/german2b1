@@ -1,4 +1,5 @@
 ---
+import A1Readiness from "@components/A1Readiness.astro";
 import CheatSheet from "@components/CheatSheet.astro";
 import MicroCheck from "@components/MicroCheck.astro";
 import ResourceList from "@components/ResourceList.astro";
@@ -63,6 +64,7 @@ const totalMinutes = module.tasks.reduce((sum, task) => sum + task.minutes, 0);
   <div class="module-layout module-grid">
     <article class="reader">
       <CheatSheet module={module} />
+      {module.level === "A1" && <A1Readiness moduleId={module.id} />}
       <StudyExtras extra={studyExtra} module={module} />
       <TaskList tasks={module.tasks} />
       <MicroCheck checks={module.microChecks} />

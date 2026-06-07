@@ -1,7 +1,8 @@
-const CACHE_NAME = "german2b1-shell-v5";
+const CACHE_NAME = "german2b1-shell-v6";
 const APP_SCOPE = self.registration.scope;
 const APP_SHELL = [
   "./",
+  "./dashboard/",
   "./basics/",
   "./basics/alphabet/",
   "./basics/numbers/",

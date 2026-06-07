@@ -1,11 +1,16 @@
 ---
+import GermanText from "@components/GermanText.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
+import { a1ExamTasks, a1TopicBuckets, a1VocabularyTargets } from "@data/a1Readiness";
 import { getModulesByLevel, levels, modules } from "@data/modules";
 import { topics } from "@data/topics";
 import { withBasePath } from "@utils/paths";
 
 const a1Modules = modules.filter((module) => module.level === "A1");
 const continueModule = a1Modules[0];
+const a1ActiveTargetTotal = a1VocabularyTargets.reduce((sum, target) => sum + target.activeItems, 0);
+const featuredA1Topics = a1TopicBuckets.slice(0, 4);
+const featuredExamTasks = a1ExamTasks.slice(0, 3);
 const priorityTopicIds = [
   "pronunciation-alphabet",
   "sein-and-haben",
@@ -45,6 +50,58 @@ const levelHours: Record<string, string> = {
       the explanations stay in English.
     </p>
     <div class="rule-orn" aria-hidden="true"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head-row">
+      <h2>A1 standards snapshot</h2>
+      <a class="button secondary" href={withBasePath("/dashboard")}>Open dashboard →</a>
+    </div>
+    <div class="readiness-overview" aria-label="A1 readiness summary">
+      <article class="readiness-stat">
+        <span class="meta">Topic buckets</span>
+        <strong>{a1TopicBuckets.length}</strong>
+        <p>Everyday communication: identity, forms, time, shopping, city life, travel, health, and signs.</p>
+      </article>
+      <article class="readiness-stat">
+        <span class="meta">Active word target</span>
+        <strong>{a1ActiveTargetTotal}</strong>
+        <p>Production vocabulary grouped by realistic use, with article and example sentence habits built in.</p>
+      </article>
+      <article class="readiness-stat">
+        <span class="meta">Exam-shaped drills</span>
+        <strong>{a1ExamTasks.length}</strong>
+        <p>Self-presentation, form filling, number dictation, service roleplay, signs, and short messages.</p>
+      </article>
+    </div>
+    <div class="a1-scope-grid">
+      {
+        featuredA1Topics.map((topic) => (
+          <article class="scope-card">
+            <h3>{topic.title}</h3>
+            <p>{topic.why}</p>
+            <div class="pill-row">
+              {topic.examples.slice(0, 3).map((example) => (
+                <span class="pill">
+                  <GermanText text={example} display={example} />
+                </span>
+              ))}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+    <div class="exam-strip">
+      {
+        featuredExamTasks.map((task) => (
+          <article class="exam-strip-item">
+            <span class="meta">{task.skill}</span>
+            <h3>{task.title}</h3>
+            <GermanText text={task.promptDe} strong block />
+          </article>
+        ))
+      }
+    </div>
   </section>
 
   <section class="section">

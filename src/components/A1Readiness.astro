@@ -1,0 +1,74 @@
+---
+import GermanText from "@components/GermanText.astro";
+import { getA1ReadinessForModule } from "@data/a1Readiness";
+
+type Props = {
+  moduleId: string;
+};
+
+const { moduleId } = Astro.props;
+const readiness = getA1ReadinessForModule(moduleId);
+const hasReadiness =
+  readiness.topicBuckets.length > 0 ||
+  readiness.grammarPoints.length > 0 ||
+  readiness.examTasks.length > 0;
+---
+
+{
+  hasReadiness && (
+    <section>
+      <h2>A1 Readiness Focus</h2>
+      <div class="a1-readiness-panel">
+        <div class="a1-readiness-column">
+          <span class="meta">Official-scope topics</span>
+          <div class="a1-chip-list">
+            {readiness.topicBuckets.slice(0, 4).map((topic) => (
+              <article class="a1-chip-card">
+                <h3>{topic.title}</h3>
+                <p>{topic.why}</p>
+                <div class="pill-row">
+                  {topic.examples.slice(0, 4).map((example) => (
+                    <span class="pill">{example}</span>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div class="a1-readiness-column">
+          <span class="meta">Grammar anchors</span>
+          <div class="a1-mini-list">
+            {readiness.grammarPoints.slice(0, 4).map((point) => (
+              <article class="a1-mini-card">
+                <div>
+                  <span class="pill blue">{point.status}</span>
+                  <h3>{point.title}</h3>
+                </div>
+                <p>{point.focus}</p>
+                <GermanText text={point.example} strong />
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div class="a1-readiness-column">
+          <span class="meta">Exam-shaped drill</span>
+          <div class="a1-mini-list">
+            {readiness.examTasks.slice(0, 2).map((task) => (
+              <article class="a1-mini-card">
+                <div class="a1-task-head">
+                  <span class="pill">{task.skill}</span>
+                  <h3>{task.title}</h3>
+                </div>
+                <p>{task.taskShape}</p>
+                <GermanText text={task.promptDe} strong block />
+                <small>{task.successSignal}</small>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

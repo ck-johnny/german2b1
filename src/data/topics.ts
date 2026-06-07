@@ -746,6 +746,81 @@ export const topics: StudyTopic[] = [
     ],
     moduleIds: ["a1-6"],
   },
+  {
+    id: "weather-and-seasons",
+    category: "Vocabulary",
+    title: "Weather and Seasons",
+    summary: "Talk about basic weather, seasons, temperature, and simple plans connected to the weather.",
+    level: "A1",
+    focus: ["weather", "seasons", "temperature", "simple opinions"],
+    explanation: [
+      "Weather is small talk, planning language, and listening vocabulary. Keep it simple at A1: condition plus one reaction.",
+      "Use im with seasons and months: im Sommer, im Januar.",
+      "Weather phrases often use es: Es regnet. Es ist kalt. Es ist warm.",
+    ],
+    patterns: [
+      { label: "question", de: "Wie ist das Wetter?", en: "What is the weather like?" },
+      { label: "rain", de: "Es regnet.", en: "It is raining." },
+      { label: "cold", de: "Es ist kalt.", en: "It is cold." },
+      { label: "warm", de: "Im Sommer ist es warm.", en: "In summer it is warm." },
+      { label: "plan", de: "Bei gutem Wetter gehen wir spazieren.", en: "In good weather we go for a walk." },
+    ],
+    commonMistakes: [
+      "Do not translate English it is raining word by word. German says Es regnet.",
+      "Use im for seasons: im Winter, im Frühling, im Sommer, im Herbst.",
+      "For A1, one weather sentence plus one simple plan is enough.",
+    ],
+    practice: [
+      "Say today's weather in one sentence.",
+      "Make four season sentences with im.",
+      "Write two plans: one for good weather and one for bad weather.",
+      "Listen to five weather sentences and identify the season or condition.",
+    ],
+    checks: [
+      { prompt: "Translate: It is raining.", answer: "Es regnet." },
+      { prompt: "Choose: am Sommer / im Sommer", answer: "im Sommer" },
+      { prompt: "Translate: What is the weather like?", answer: "Wie ist das Wetter?" },
+    ],
+    moduleIds: ["a1-3", "a1-6"],
+  },
+  {
+    id: "forms-notes-and-signs",
+    category: "Communication",
+    title: "Forms, Notes, and Signs",
+    summary: "Read short public information, fill simple forms, and write two- to four-sentence messages.",
+    level: "A1",
+    focus: ["forms", "notices", "signs", "short messages"],
+    explanation: [
+      "A1 exams and everyday life both use very short practical texts: forms, signs, notes, messages, and notices.",
+      "For forms, recognise labels before translating every word. For messages, include reason, action, and polite closing.",
+      "Public signs often name a place or action: Eingang, Ausgang, Bitte warten.",
+    ],
+    patterns: [
+      { label: "form", de: "Bitte füllen Sie das Formular aus.", en: "Please fill out the form." },
+      { label: "label", de: "Name, Adresse, Telefonnummer", en: "Name, address, phone number" },
+      { label: "sign", de: "Ausgang", en: "Exit" },
+      { label: "notice", de: "Bitte warten Sie hier.", en: "Please wait here." },
+      { label: "message", de: "Entschuldigung, ich kann heute nicht kommen.", en: "Sorry, I cannot come today." },
+      { label: "close", de: "Vielen Dank und freundliche Grüße", en: "Many thanks and kind regards" },
+    ],
+    commonMistakes: [
+      "Do not write long explanations for an A1 short message. Keep it clear and practical.",
+      "Do not ignore form labels. Name, address, phone number, and date of birth are core A1 words.",
+      "A sign may not be a full sentence; still learn it as useful language.",
+    ],
+    practice: [
+      "Fill one fictional form using German labels.",
+      "Sort signs into place, direction, or action.",
+      "Write a cancellation message with reason and request.",
+      "Read a short notice and underline the time, place, or required action.",
+    ],
+    checks: [
+      { prompt: "What does Ausgang mean?", answer: "exit" },
+      { prompt: "Translate: Please wait here.", answer: "Bitte warten Sie hier." },
+      { prompt: "What three things should a short cancellation message include?", answer: "Reason, action, and polite tone." },
+    ],
+    moduleIds: ["a1-2", "a1-5", "a1-6"],
+  },
 ];
 
 export const topicCategories: TopicCategory[] = ["Grammar", "Vocabulary", "Communication"];

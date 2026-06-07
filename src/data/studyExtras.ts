@@ -356,9 +356,12 @@ const studyExtraExpansions: Record<string, StudyExtra> = {
     phrases: [
       { de: "Wie bitte?", en: "Pardon?", zh: "" },
       { de: "Langsam bitte.", en: "Slowly, please.", zh: "" },
+      { de: "Bitte buchstabieren Sie das.", en: "Please spell that.", zh: "" },
+      { de: "A wie Anton.", en: "A as in Anton.", zh: "" },
     ],
     sentenceDrills: [
       { de: "Guten Tag, können Sie langsam sprechen?", en: "Hello, can you speak slowly?", zh: "" },
+      { de: "Können Sie meinen Namen bitte wiederholen?", en: "Can you repeat my name, please?", zh: "" },
     ],
   },
   "a1-2": {
@@ -369,9 +372,12 @@ const studyExtraExpansions: Record<string, StudyExtra> = {
     phrases: [
       { de: "Wie schreibt man das?", en: "How do you write that?", zh: "" },
       { de: "Ich bin ledig.", en: "I am single.", zh: "" },
+      { de: "das Geburtsdatum", en: "date of birth", zh: "" },
+      { de: "das Formular", en: "form", zh: "" },
     ],
     sentenceDrills: [
       { de: "Meine Adresse ist in der Hauptstraße.", en: "My address is on Hauptstrasse.", zh: "" },
+      { de: "Bitte füllen Sie das Formular aus.", en: "Please fill out the form.", zh: "" },
     ],
   },
   "a1-3": {
@@ -382,9 +388,12 @@ const studyExtraExpansions: Record<string, StudyExtra> = {
     phrases: [
       { de: "Ich stehe früh auf.", en: "I get up early.", zh: "" },
       { de: "Ich habe Feierabend.", en: "I am done with work.", zh: "" },
+      { de: "halb zehn", en: "half past nine / 9:30", zh: "" },
+      { de: "am ersten Juni", en: "on the first of June", zh: "" },
     ],
     sentenceDrills: [
       { de: "Nach der Arbeit lerne ich kurz Deutsch.", en: "After work I study German briefly.", zh: "" },
+      { de: "Der Termin ist am Montag um halb elf.", en: "The appointment is on Monday at half past ten.", zh: "" },
     ],
   },
   "a1-4": {
@@ -395,9 +404,12 @@ const studyExtraExpansions: Record<string, StudyExtra> = {
     phrases: [
       { de: "Ich zahle bar.", en: "I pay in cash.", zh: "" },
       { de: "Noch etwas?", en: "Anything else?", zh: "" },
+      { de: "ohne Milch", en: "without milk", zh: "" },
+      { de: "ein Kilo Äpfel", en: "one kilo of apples", zh: "" },
     ],
     sentenceDrills: [
       { de: "Ich möchte zahlen, bitte.", en: "I would like to pay, please.", zh: "" },
+      { de: "Ich hätte gern ein Brot und einen Apfel.", en: "I would like a loaf of bread and an apple.", zh: "" },
     ],
   },
   "a1-5": {
@@ -408,9 +420,13 @@ const studyExtraExpansions: Record<string, StudyExtra> = {
     phrases: [
       { de: "Ist das weit?", en: "Is that far?", zh: "" },
       { de: "Es ist in der Nähe.", en: "It is nearby.", zh: "" },
+      { de: "der Eingang", en: "entrance", zh: "" },
+      { de: "der Ausgang", en: "exit", zh: "" },
+      { de: "Wo ist Gleis eins?", en: "Where is platform one?", zh: "" },
     ],
     sentenceDrills: [
       { de: "Die Apotheke ist rechts neben dem Supermarkt.", en: "The pharmacy is on the right next to the supermarket.", zh: "" },
+      { de: "Bitte warten Sie vor dem Eingang.", en: "Please wait in front of the entrance.", zh: "" },
     ],
   },
   "a1-6": {
@@ -421,9 +437,12 @@ const studyExtraExpansions: Record<string, StudyExtra> = {
     phrases: [
       { de: "Ich komme später.", en: "I am coming later.", zh: "" },
       { de: "Gute Besserung.", en: "Get well soon.", zh: "" },
+      { de: "Ich habe Kopfschmerzen.", en: "I have a headache.", zh: "" },
+      { de: "Ich hatte einen Termin.", en: "I had an appointment.", zh: "" },
     ],
     sentenceDrills: [
       { de: "Leider hat mein Bus Verspätung.", en: "Unfortunately my bus is delayed.", zh: "" },
+      { de: "Gestern war ich krank und heute brauche ich einen neuen Termin.", en: "Yesterday I was sick and today I need a new appointment.", zh: "" },
     ],
   },
   "a2-1": {

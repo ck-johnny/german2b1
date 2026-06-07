@@ -23,6 +23,7 @@ const navItems = [
   { href: "/review", label: "Review" },
   { href: "/resources", label: "Resources" },
 ];
+const sideOnlyNavItems = [{ href: "/dashboard", label: "Dashboard" }];
 const isModulesPath = currentPath.startsWith("/modules");
 const isBasicsPath = currentPath.startsWith("/basics");
 const isActive = (href: string) =>
@@ -124,7 +125,7 @@ const isActive = (href: string) =>
               </div>
             </details>
             {
-              navItems
+              [...sideOnlyNavItems, ...navItems]
                 .filter((item) => item.href !== "/modules" && item.href !== "/basics")
                 .map((item) => (
                   <a

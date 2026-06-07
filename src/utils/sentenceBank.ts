@@ -29,6 +29,21 @@ const categorizeSentence = (item: TrilingualExample, label: SentenceBankItem["la
   }
 
   if (
+    includesAny(text, [
+      "formular",
+      "geburtsdatum",
+      "postleitzahl",
+      "ausgang",
+      "eingang",
+      "gleis",
+      "bitte warten",
+      "füll",
+    ])
+  ) {
+    return "Forms, signs and notices";
+  }
+
+  if (
     text.includes("?") ||
     text.startsWith("wie ") ||
     text.startsWith("wo ") ||
